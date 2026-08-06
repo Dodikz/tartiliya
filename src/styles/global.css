@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+
+  --color-brand-dark: #111827;
+  --color-brand-white: #ffffff;
+  --color-brand-gray: #6b7280;
+  --color-brand-light-gray: #f3f4f6;
+  --color-brand-mint-light: #e3fcf0;
+  --color-brand-primary: #009788;
+  --color-brand-primary-dark: #0d8174;
+  --color-brand-pink-light: #fec8c8;
+  --color-brand-red: #dc2626;
+  --color-brand-black: #000000;
+  --color-brand-bg-light: #f8fafc;
+  --color-brand-cyan: #00b2ff;
+  --color-brand-dim-gray: #696969;
+}
+
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #111827;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.dark body {
+  background-color: #111827;
+  color: #f8fafc;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+  src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v243/sy21759600s46V5mX3Jb0iR0mC6Z16W.woff2) format('woff2');
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
+}
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #696969;
+}
+
+
+@keyframes clockPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
