@@ -1,0 +1,174 @@
+---
+import "../styles/global.css";
+import Navbar from "../layouts/navbar.astro";
+import { SURAH_LIST } from "../data/surahs";
+---
+
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="Tartiliya - Al-Qur'an Online Terjemah dan Tafsir Bahasa Indonesia" />
+		<title>Tartiliya - Al-Qur'an Online Bahasa Indonesia</title>
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+		
+		<script is:inline>
+			const theme = localStorage.getItem('theme');
+			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+	</head>
+	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
+		<Navbar />
+		
+		<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
+			<div class="rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 p-6 sm:p-8 mb-6">
+				<div class="inline-block px-3.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+					Al-Qur'an Karim • 114 Surah
+				</div>
+				<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1">
+					Baca Al-Qur'an Online Bahasa Indonesia
+				</h1>
+				<p class="text-sm text-[#6b7280] font-normal leading-relaxed mb-4 max-w-2xl">
+					Lengkap dengan teks Arab, terjemahan Bahasa Indonesia, audio ayat, serta tafsir Kemenag RI.
+				</p>
+
+				<div id="last-read-card" class="hidden inline-flex items-center gap-3 bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20 p-3 px-4 rounded-xl">
+					<span class="material-symbols-rounded text-xl text-[#009788]">bookmark</span>
+					<div>
+						<div class="text-[10px] text-[#6b7280] uppercase tracking-wider font-semibold">Terakhir Dibaca</div>
+						<a id="last-read-link" href="#" class="text-xs font-bold text-[#009788] hover:underline flex items-center gap-1">
+							<span id="last-read-title">Surah ...</span>
+							<span class="material-symbols-rounded text-sm">arrow_forward</span>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+				<div class="flex items-center gap-2 w-full sm:w-auto">
+					<button id="filter-all" class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-colors bg-[#009788] text-white">
+						Semua (114)
+					</button>
+					<button id="filter-makkiyah" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-colors bg-white dark:bg-[#111827] text-[#6b7280] border border-[#6b7280]/20 hover:text-[#009788]">
+						Makkiyah
+					</button>
+					<button id="filter-madaniyah" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-colors bg-white dark:bg-[#111827] text-[#6b7280] border border-[#6b7280]/20 hover:text-[#009788]">
+						Madaniyah
+					</button>
+				</div>
+
+				<div class="relative w-full sm:w-72">
+					<span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-xl text-[#009788] pointer-events-none">search</span>
+					<input 
+						id="surah-search-input" 
+						type="text" 
+						placeholder="Cari surah (misal: Yasin, Al-Mulk)..." 
+						class="w-full bg-white dark:bg-[#111827] border border-[#6b7280]/20 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-[#111827] dark:text-white placeholder-[#6b7280] outline-none focus:border-[#009788] transition-colors"
+					/>
+				</div>
+			</div>
+
+			<div id="surah-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+				{SURAH_LIST.map((surah) => (
+					<a 
+						href={`/quran/${surah.slug}`}
+						data-type={surah.revelationType}
+						data-search={`${surah.name.toLowerCase()} ${surah.latinName.toLowerCase()} ${surah.translation.toLowerCase()} ${surah.number}`}
+						class="surah-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 hover:border-[#009788] transition-colors flex items-center justify-between group"
+					>
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 flex items-center justify-center text-xs font-bold text-black dark:text-white">
+								{surah.number}
+							</div>
+							<div>
+								<h3 class="text-sm font-bold text-[#111827] dark:text-white group-hover:text-[#009788] transition-colors">
+									{surah.name}
+								</h3>
+								<p class="text-xs text-[#6b7280] mt-0.5">
+									{surah.translation} • <span class="font-semibold text-gray-700 dark:text-gray-300">{surah.numberOfAyahs} Ayat</span>
+								</p>
+							</div>
+						</div>
+
+						<div class="text-right">
+							<span class="font-['Amiri'] text-xl font-bold text-[#009788] block">
+								{surah.arabicName}
+							</span>
+							<span class="text-[10px] font-medium text-[#6b7280] uppercase tracking-wider">
+								{surah.revelationType}
+							</span>
+						</div>
+					</a>
+				))}
+			</div>
+		</main>
+
+		<script>
+			const lastRead = localStorage.getItem('lastReadSurah');
+			if (lastRead) {
+				try {
+					const data = JSON.parse(lastRead);
+					const card = document.getElementById('last-read-card');
+					const link = document.getElementById('last-read-link') as HTMLAnchorElement;
+					const title = document.getElementById('last-read-title');
+					if (card && link && title) {
+						title.textContent = `Surah ${data.name} (Ayat ${data.ayah})`;
+						link.href = `/quran/${data.slug || 'al-fatihah'}#ayah-${data.ayah}`;
+						card.classList.remove('hidden');
+					}
+				} catch (_) {}
+			}
+
+			const searchInput = document.getElementById('surah-search-input') as HTMLInputElement;
+			const cards = document.querySelectorAll('.surah-card');
+			const filterBtns = document.querySelectorAll('.filter-btn');
+
+			let activeFilter = 'all';
+
+			function applyFilters() {
+				const query = searchInput.value.toLowerCase().trim();
+				cards.forEach((card) => {
+					const el = card as HTMLElement;
+					const type = el.getAttribute('data-type')?.toLowerCase();
+					const searchData = el.getAttribute('data-search') || '';
+
+					const matchesFilter = activeFilter === 'all' || type === activeFilter;
+					const matchesSearch = !query || searchData.includes(query);
+
+					if (matchesFilter && matchesSearch) {
+						el.classList.remove('hidden');
+					} else {
+						el.classList.add('hidden');
+					}
+				});
+			}
+
+			searchInput?.addEventListener('input', applyFilters);
+
+			filterBtns.forEach((btn) => {
+				btn.addEventListener('click', (e) => {
+					filterBtns.forEach(b => {
+						b.classList.remove('bg-[#009788]', 'text-white');
+						b.classList.add('bg-white', 'dark:bg-[#111827]', 'text-[#6b7280]');
+					});
+					const target = e.currentTarget as HTMLElement;
+					target.classList.remove('bg-white', 'dark:bg-[#111827]', 'text-[#6b7280]');
+					target.classList.add('bg-[#009788]', 'text-white');
+
+					if (target.id === 'filter-makkiyah') activeFilter = 'makkiyah';
+					else if (target.id === 'filter-madaniyah') activeFilter = 'madaniyah';
+					else activeFilter = 'all';
+
+					applyFilters();
+				});
+			});
+		</script>
+	</body>
+</html>
