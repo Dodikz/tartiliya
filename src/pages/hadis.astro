@@ -1,0 +1,290 @@
+---
+import "../styles/global.css";
+import Navbar from "../layouts/navbar.astro";
+import { HadisService } from "../lib/api/hadis";
+
+let initialHadis: any[] = [];
+let initialPaging: any = null;
+let fetchError = "";
+
+try {
+  const res = await HadisService.explore(1, 10);
+  if (res && res.data) {
+    initialHadis = res.data.hadis || [];
+    initialPaging = res.data.paging || null;
+  }
+} catch (err: any) {
+  fetchError = err?.message || "Gagal memuat ensiklopedia hadis.";
+}
+---
+
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Ensiklopedia Hadis - Tartiliya</title>
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+		
+		<script is:inline>
+			const theme = localStorage.getItem('theme');
+			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+	</head>
+	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
+		<Navbar />
+		
+		<main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
+			<div class="rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 p-6 sm:p-8 mb-6">
+				<div class="inline-block px-3.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+					Ensiklopedia Hadis Shahih & Pilihan
+				</div>
+				<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1">
+					Ensiklopedia Hadis Nabi
+				</h1>
+				<p class="text-sm text-[#6b7280] font-normal max-w-2xl">
+					Kumpulan hadis Rasulullah SAW dilengkapi matn Arab, terjemahan Indonesia, takhrij perawi, serta faedah dan hikmahnya.
+				</p>
+			</div>
+
+			<div class="mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+				<button type="button" class="hadis-topic-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#009788] text-white whitespace-nowrap transition-colors cursor-pointer" data-topic="">
+					Semua Hadis
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="niat">
+					Niat
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="shalat">
+					Shalat
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="ilmu">
+					Ilmu
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="akhlak">
+					Akhlak
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="doa">
+					Doa
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="iman">
+					Iman
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="puasa">
+					Puasa
+				</button>
+				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="sedekah">
+					Sedekah
+				</button>
+			</div>
+
+			<div class="mb-6">
+				<div class="relative w-full">
+					<span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#009788] pointer-events-none">search</span>
+					<input 
+						id="hadis-search-input" 
+						type="text" 
+						placeholder="Cari hadis berdasarkan kata kunci (misal: niat, shalat, ilmu)..." 
+						class="w-full bg-white dark:bg-[#111827] border border-[#6b7280]/20 rounded-xl pl-12 pr-4 py-3 text-sm text-[#111827] dark:text-white placeholder-[#6b7280] outline-none focus:border-[#009788] transition-colors"
+					/>
+				</div>
+			</div>
+
+			{fetchError && (
+				<div class="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 text-center text-red-600 dark:text-red-400 text-sm mb-6 font-medium">
+					{fetchError}
+				</div>
+			)}
+
+			<div id="hadis-list-container" class="space-y-4">
+				{initialHadis.map((h) => (
+					<div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 transition-colors">
+						<div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
+							<div class="flex items-center gap-2">
+								<span class="px-2.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold font-mono shadow-xs">
+									Hadis #{h.id}
+								</span>
+								{h.grade && (
+									<span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-xs">
+										{h.grade}
+									</span>
+								)}
+							</div>
+							{h.takhrij && (
+								<span class="text-xs text-[#6b7280] font-medium">
+									{h.takhrij}
+								</span>
+							)}
+						</div>
+
+						{h.text?.ar && (
+							<div class="text-right font-['Scheherazade_New'] text-2xl sm:text-3xl leading-[2.2] text-[#111827] dark:text-white font-bold mb-4">
+								{h.text.ar}
+							</div>
+						)}
+
+						{h.text?.id && (
+							<p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-normal mb-4">
+								{h.text.id}
+							</p>
+						)}
+
+						{h.hikmah && (
+							<div class="p-4 rounded-xl bg-[#f8fafc] dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
+								<span class="font-bold text-[#009788] uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+									<span class="material-symbols-rounded text-base text-[#009788]">lightbulb</span>
+									Hikmah & Pelajaran:
+								</span>
+								<div class="leading-relaxed whitespace-pre-wrap font-normal">
+									{h.hikmah}
+								</div>
+							</div>
+						)}
+					</div>
+				))}
+			</div>
+
+			<div class="flex items-center justify-between gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+				<button id="btn-prev-page" class="px-4 py-2 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-xs font-bold text-[#009788] disabled:opacity-40 cursor-pointer hover:border-[#009788] transition-colors">
+					← Sebelumnya
+				</button>
+				<span id="paging-info" class="text-xs font-semibold text-[#6b7280]">
+					Halaman {initialPaging?.current || 1} dari {initialPaging?.total_pages || 1}
+				</span>
+				<button id="btn-next-page" class="px-4 py-2 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-xs font-bold text-[#009788] disabled:opacity-40 cursor-pointer hover:border-[#009788] transition-colors">
+					Selanjutnya →
+				</button>
+			</div>
+		</main>
+
+		<script>
+			import { HadisService } from "../lib/api/hadis";
+
+			let currentPage = 1;
+			let currentKeyword = '';
+			const searchInput = document.getElementById('hadis-search-input') as HTMLInputElement;
+			const container = document.getElementById('hadis-list-container');
+			const pagingInfo = document.getElementById('paging-info');
+			const btnPrev = document.getElementById('btn-prev-page') as HTMLButtonElement;
+			const btnNext = document.getElementById('btn-next-page') as HTMLButtonElement;
+
+			function renderHadisCard(h: any): string {
+				return `
+					<div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 transition-colors">
+						<div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
+							<div class="flex items-center gap-2">
+								<span class="px-2.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold font-mono shadow-xs">
+									Hadis #${h.id}
+								</span>
+								${h.grade ? `<span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-xs">${h.grade}</span>` : ''}
+							</div>
+							${h.takhrij ? `<span class="text-xs text-[#6b7280] font-medium">${h.takhrij}</span>` : ''}
+						</div>
+
+						${h.text?.ar ? `<div class="text-right font-['Scheherazade_New'] text-2xl sm:text-3xl leading-[2.2] text-[#111827] dark:text-white font-bold mb-4">${h.text.ar}</div>` : ''}
+						${h.text?.id || typeof h.text === 'string' ? `<p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-normal mb-4">${h.text?.id || h.text}</p>` : ''}
+						${h.hikmah ? `
+							<div class="p-4 rounded-xl bg-[#f8fafc] dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
+								<span class="font-bold text-[#009788] uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+									<span class="material-symbols-rounded text-base text-[#009788]">lightbulb</span>
+									Hikmah & Pelajaran:
+								</span>
+								<div class="leading-relaxed whitespace-pre-wrap font-normal">${h.hikmah}</div>
+							</div>
+						` : ''}
+					</div>
+				`;
+			}
+
+			async function loadHadis(page: number, keyword: string = '') {
+				if (!container) return;
+				container.innerHTML = `<div class="p-8 text-center text-sm text-[#6b7280]">Memuat hadis...</div>`;
+
+				try {
+					const res = await HadisService.explore(page, 10);
+
+					if (res && res.data) {
+						let hadisList = res.data.hadis || [];
+						const paging = res.data.paging || {};
+
+						if (keyword.trim()) {
+							const kw = keyword.trim().toLowerCase();
+							hadisList = hadisList.filter((h: any) => {
+								const textId = (h.text?.id || (typeof h.text === 'string' ? h.text : '')).toLowerCase();
+								const textAr = (h.text?.ar || '').toLowerCase();
+								const grade = (h.grade || '').toLowerCase();
+								const takhrij = (h.takhrij || '').toLowerCase();
+								const hikmah = (h.hikmah || '').toLowerCase();
+								return textId.includes(kw) || textAr.includes(kw) || grade.includes(kw) || takhrij.includes(kw) || hikmah.includes(kw);
+							});
+						}
+
+						if (pagingInfo) pagingInfo.textContent = `Halaman ${paging.current || 1} dari ${paging.total_pages || 1}`;
+						if (btnPrev) btnPrev.disabled = !paging.has_prev;
+						if (btnNext) btnNext.disabled = !paging.has_next;
+
+						if (hadisList.length === 0) {
+							container.innerHTML = `<div class="p-8 text-center text-sm text-[#6b7280]">
+								<span class="material-symbols-rounded text-4xl text-[#009788]/30 block mb-2">search_off</span>
+								Tidak ada hadis yang cocok dengan kata kunci "<strong>${keyword}</strong>" pada halaman ini.<br>
+								<span class="text-xs">Coba kata kunci lain atau navigasi ke halaman berikutnya.</span>
+							</div>`;
+							return;
+						}
+
+						container.innerHTML = hadisList.map(renderHadisCard).join('');
+					}
+				} catch (err: any) {
+					console.error('loadHadis error:', err);
+					container.innerHTML = `<div class="p-8 text-center text-sm text-red-500">Gagal memuat data. Periksa koneksi internet Anda.</div>`;
+				}
+			}
+
+			const topicBtns = document.querySelectorAll('.hadis-topic-btn');
+			topicBtns.forEach(btn => {
+				btn.addEventListener('click', (e) => {
+					topicBtns.forEach(b => {
+						b.classList.remove('bg-[#009788]', 'text-white', 'active');
+						b.classList.add('bg-white', 'dark:bg-[#111827]', 'text-gray-700', 'dark:text-gray-300');
+					});
+					const target = e.currentTarget as HTMLElement;
+					target.classList.remove('bg-white', 'dark:bg-[#111827]', 'text-gray-700', 'dark:text-gray-300');
+					target.classList.add('bg-[#009788]', 'text-white', 'active');
+
+					const topic = target.getAttribute('data-topic') || '';
+					currentKeyword = topic;
+					if (searchInput) searchInput.value = topic;
+					currentPage = 1;
+					loadHadis(1, topic);
+				});
+			});
+
+			let searchTimeout: any = null;
+			searchInput?.addEventListener('input', (e) => {
+				clearTimeout(searchTimeout);
+				searchTimeout = setTimeout(() => {
+					currentKeyword = (e.target as HTMLInputElement).value;
+					currentPage = 1;
+					loadHadis(1, currentKeyword);
+				}, 400);
+			});
+
+			btnPrev?.addEventListener('click', () => {
+				if (currentPage > 1) {
+					currentPage--;
+					loadHadis(currentPage, currentKeyword);
+				}
+			});
+
+			btnNext?.addEventListener('click', () => {
+				currentPage++;
+				loadHadis(currentPage, currentKeyword);
+			});
+		</script>
+	</body>
+</html>
