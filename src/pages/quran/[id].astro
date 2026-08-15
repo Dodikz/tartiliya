@@ -48,7 +48,7 @@ const nextSurah = surahNumber < 114 ? SURAH_LIST[surahNumber] : null;
 		
 		<script is:inline>
 			const theme = localStorage.getItem('theme');
-			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			if (theme === 'dark') {
 				document.documentElement.classList.add('dark');
 			}
 		</script>

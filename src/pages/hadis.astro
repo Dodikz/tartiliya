@@ -32,7 +32,7 @@ try {
 		
 		<script is:inline>
 			const theme = localStorage.getItem('theme');
-			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			if (theme === 'dark') {
 				document.documentElement.classList.add('dark');
 			}
 		</script>
@@ -40,45 +40,45 @@ try {
 	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
 		<Navbar />
 		
-		<main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
-			<div class="rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 p-6 sm:p-8 mb-6">
-				<div class="inline-block px-3.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+		<main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 md:pb-12">
+			<div class="rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-8 shadow-xs">
+				<div class="inline-block px-3 py-1 bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-3">
 					Ensiklopedia Hadis Shahih & Pilihan
 				</div>
-				<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1">
+				<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-2">
 					Ensiklopedia Hadis Nabi
 				</h1>
-				<p class="text-sm text-[#6b7280] font-normal max-w-2xl">
-					Kumpulan hadis Rasulullah SAW dilengkapi matn Arab, terjemahan Indonesia, takhrij perawi, serta faedah dan hikmahnya.
+				<p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-normal max-w-2xl">
+					Kumpulan hadis Rasulullah SAW dilengkapi matn Arab, terjemahan Indonesia, derajat hadis, takhrij perawi, serta faedah dan hikmahnya.
 				</p>
 			</div>
 
-			<div class="mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-				<button type="button" class="hadis-topic-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#009788] text-white whitespace-nowrap transition-colors cursor-pointer" data-topic="">
+			<div class="mb-5 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+				<button type="button" class="hadis-topic-btn active px-4 py-2 rounded-xl text-xs font-bold bg-[#009788] text-white whitespace-nowrap transition-colors cursor-pointer shadow-xs" data-topic="">
 					Semua Hadis
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="niat">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="niat">
 					Niat
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="shalat">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="shalat">
 					Shalat
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="ilmu">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="ilmu">
 					Ilmu
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="akhlak">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="akhlak">
 					Akhlak
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="doa">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="doa">
 					Doa
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="iman">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="iman">
 					Iman
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="puasa">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="puasa">
 					Puasa
 				</button>
-				<button type="button" class="hadis-topic-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#111827] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="sedekah">
+				<button type="button" class="hadis-topic-btn px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#009788] hover:text-[#009788] whitespace-nowrap transition-colors cursor-pointer" data-topic="sedekah">
 					Sedekah
 				</button>
 			</div>
@@ -90,7 +90,7 @@ try {
 						id="hadis-search-input" 
 						type="text" 
 						placeholder="Cari hadis berdasarkan kata kunci (misal: niat, shalat, ilmu)..." 
-						class="w-full bg-white dark:bg-[#111827] border border-[#6b7280]/20 rounded-xl pl-12 pr-4 py-3 text-sm text-[#111827] dark:text-white placeholder-[#6b7280] outline-none focus:border-[#009788] transition-colors"
+						class="w-full bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-xl pl-12 pr-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 outline-none focus:border-[#009788] transition-colors shadow-2xs"
 					/>
 				</div>
 			</div>
@@ -103,27 +103,27 @@ try {
 
 			<div id="hadis-list-container" class="space-y-4">
 				{initialHadis.map((h) => (
-					<div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 transition-colors">
+					<div class="p-6 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 transition-colors shadow-2xs">
 						<div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
 							<div class="flex items-center gap-2">
-								<span class="px-2.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold font-mono shadow-xs">
+								<span class="px-2.5 py-1 bg-[#009788] text-white text-xs font-bold font-mono shadow-2xs">
 									Hadis #{h.id}
 								</span>
 								{h.grade && (
-									<span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-xs">
+									<span class="px-2.5 py-1 bg-blue-600 text-white text-xs font-bold shadow-2xs">
 										{h.grade}
 									</span>
 								)}
 							</div>
 							{h.takhrij && (
-								<span class="text-xs text-[#6b7280] font-medium">
+								<span class="text-xs text-gray-500 dark:text-gray-400 font-medium">
 									{h.takhrij}
 								</span>
 							)}
 						</div>
 
 						{h.text?.ar && (
-							<div class="text-right font-['Scheherazade_New'] text-2xl sm:text-3xl leading-[2.2] text-[#111827] dark:text-white font-bold mb-4">
+							<div class="text-right font-['Scheherazade_New'] text-2xl sm:text-3xl leading-[2.2] text-gray-900 dark:text-white font-bold mb-4">
 								{h.text.ar}
 							</div>
 						)}
@@ -135,7 +135,7 @@ try {
 						)}
 
 						{h.hikmah && (
-							<div class="p-4 rounded-xl bg-[#f8fafc] dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
+							<div class="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
 								<span class="font-bold text-[#009788] uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
 									<span class="material-symbols-rounded text-base text-[#009788]">lightbulb</span>
 									Hikmah & Pelajaran:
@@ -149,14 +149,14 @@ try {
 				))}
 			</div>
 
-			<div class="flex items-center justify-between gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
-				<button id="btn-prev-page" class="px-4 py-2 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-xs font-bold text-[#009788] disabled:opacity-40 cursor-pointer hover:border-[#009788] transition-colors">
+			<div class="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+				<button id="btn-prev-page" class="px-4 py-2 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 text-xs font-bold text-[#009788] disabled:opacity-40 cursor-pointer hover:border-[#009788] transition-colors">
 					← Sebelumnya
 				</button>
-				<span id="paging-info" class="text-xs font-semibold text-[#6b7280]">
+				<span id="paging-info" class="text-xs font-semibold text-gray-500 dark:text-gray-400">
 					Halaman {initialPaging?.current || 1} dari {initialPaging?.total_pages || 1}
 				</span>
-				<button id="btn-next-page" class="px-4 py-2 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-xs font-bold text-[#009788] disabled:opacity-40 cursor-pointer hover:border-[#009788] transition-colors">
+				<button id="btn-next-page" class="px-4 py-2 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 text-xs font-bold text-[#009788] disabled:opacity-40 cursor-pointer hover:border-[#009788] transition-colors">
 					Selanjutnya →
 				</button>
 			</div>
@@ -175,21 +175,21 @@ try {
 
 			function renderHadisCard(h: any): string {
 				return `
-					<div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 transition-colors">
+					<div class="p-6 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 transition-colors shadow-2xs">
 						<div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
 							<div class="flex items-center gap-2">
-								<span class="px-2.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold font-mono shadow-xs">
+								<span class="px-2.5 py-1 bg-[#009788] text-white text-xs font-bold font-mono shadow-2xs">
 									Hadis #${h.id}
 								</span>
-								${h.grade ? `<span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-xs">${h.grade}</span>` : ''}
+								${h.grade ? `<span class="px-2.5 py-1 bg-blue-600 text-white text-xs font-bold shadow-2xs">${h.grade}</span>` : ''}
 							</div>
-							${h.takhrij ? `<span class="text-xs text-[#6b7280] font-medium">${h.takhrij}</span>` : ''}
+							${h.takhrij ? `<span class="text-xs text-gray-500 dark:text-gray-400 font-medium">${h.takhrij}</span>` : ''}
 						</div>
 
-						${h.text?.ar ? `<div class="text-right font-['Scheherazade_New'] text-2xl sm:text-3xl leading-[2.2] text-[#111827] dark:text-white font-bold mb-4">${h.text.ar}</div>` : ''}
+						${h.text?.ar ? `<div class="text-right font-['Scheherazade_New'] text-2xl sm:text-3xl leading-[2.2] text-gray-900 dark:text-white font-bold mb-4">${h.text.ar}</div>` : ''}
 						${h.text?.id || typeof h.text === 'string' ? `<p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-normal mb-4">${h.text?.id || h.text}</p>` : ''}
 						${h.hikmah ? `
-							<div class="p-4 rounded-xl bg-[#f8fafc] dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
+							<div class="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
 								<span class="font-bold text-[#009788] uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
 									<span class="material-symbols-rounded text-base text-[#009788]">lightbulb</span>
 									Hikmah & Pelajaran:
@@ -203,7 +203,7 @@ try {
 
 			async function loadHadis(page: number, keyword: string = '') {
 				if (!container) return;
-				container.innerHTML = `<div class="p-8 text-center text-sm text-[#6b7280]">Memuat hadis...</div>`;
+				container.innerHTML = `<div class="p-8 text-center text-sm text-gray-500">Memuat hadis...</div>`;
 
 				try {
 					const res = await HadisService.explore(page, 10);
@@ -229,7 +229,7 @@ try {
 						if (btnNext) btnNext.disabled = !paging.has_next;
 
 						if (hadisList.length === 0) {
-							container.innerHTML = `<div class="p-8 text-center text-sm text-[#6b7280]">
+							container.innerHTML = `<div class="p-8 text-center text-sm text-gray-500">
 								<span class="material-symbols-rounded text-4xl text-[#009788]/30 block mb-2">search_off</span>
 								Tidak ada hadis yang cocok dengan kata kunci "<strong>${keyword}</strong>" pada halaman ini.<br>
 								<span class="text-xs">Coba kata kunci lain atau navigasi ke halaman berikutnya.</span>
@@ -250,10 +250,10 @@ try {
 				btn.addEventListener('click', (e) => {
 					topicBtns.forEach(b => {
 						b.classList.remove('bg-[#009788]', 'text-white', 'active');
-						b.classList.add('bg-white', 'dark:bg-[#111827]', 'text-gray-700', 'dark:text-gray-300');
+						b.classList.add('bg-white', 'dark:bg-[#1f2937]', 'text-gray-700', 'dark:text-gray-300');
 					});
 					const target = e.currentTarget as HTMLElement;
-					target.classList.remove('bg-white', 'dark:bg-[#111827]', 'text-gray-700', 'dark:text-gray-300');
+					target.classList.remove('bg-white', 'dark:bg-[#1f2937]', 'text-gray-700', 'dark:text-gray-300');
 					target.classList.add('bg-[#009788]', 'text-white', 'active');
 
 					const topic = target.getAttribute('data-topic') || '';
