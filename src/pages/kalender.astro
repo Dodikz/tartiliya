@@ -1,0 +1,498 @@
+---
+import "../styles/global.css";
+import Navbar from "../layouts/navbar.astro";
+---
+
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Kalender Hijriah & Arah Kiblat - Tartiliya</title>
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+		
+		<script is:inline>
+			const theme = localStorage.getItem('theme');
+			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+	</head>
+	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
+		<Navbar />
+		
+		<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
+			<div class="rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 p-6 sm:p-8 mb-6">
+				<div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+					<span class="material-symbols-rounded text-sm">calendar_month</span>
+					Kalender Hijriah & Penunjuk Arah Kiblat
+				</div>
+				<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1">
+					Kalender Islam & Kiblat
+				</h1>
+				<p class="text-sm text-[#6b7280] font-normal max-w-xl">
+					Konversi penanggalan Masehi ke Hijriah serta kalkulator derajat arah kiblat berdasarkan posisi koordinat lokasi Anda.
+				</p>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<div class="p-6 rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 flex flex-col justify-between">
+					<div>
+						<div class="flex items-center gap-3 mb-6">
+							<div class="w-10 h-10 rounded-xl bg-[#009788] text-white flex items-center justify-center font-bold shadow-xs">
+								<span class="material-symbols-rounded text-2xl">event</span>
+							</div>
+							<div>
+								<h2 class="text-base font-bold text-[#111827] dark:text-white">Konversi Tanggal Hijriah</h2>
+								<p class="text-xs text-[#6b7280]">Metode Standar Kemenag / Ummul Qura</p>
+							</div>
+						</div>
+
+						<div class="mb-6 bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20 rounded-2xl p-5">
+							<div class="flex items-center justify-between mb-4">
+								<h3 id="cal-month-year-title" class="text-sm font-bold text-[#111827] dark:text-white">
+									Agustus 2026
+								</h3>
+								<div class="flex items-center gap-1">
+									<button 
+										type="button" 
+										id="cal-prev-month" 
+										class="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 hover:text-[#111827] dark:hover:text-white transition-colors cursor-pointer"
+										title="Bulan Sebelumnya"
+									>
+										<span class="material-symbols-rounded text-base">chevron_left</span>
+									</button>
+									<button 
+										type="button" 
+										id="cal-next-month" 
+										class="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 hover:text-[#111827] dark:hover:text-white transition-colors cursor-pointer"
+										title="Bulan Selanjutnya"
+									>
+										<span class="material-symbols-rounded text-base">chevron_right</span>
+									</button>
+								</div>
+							</div>
+
+							<div class="grid grid-cols-7 text-center text-xs font-bold text-gray-400 mb-2">
+								<div>M</div>
+								<div>S</div>
+								<div>S</div>
+								<div>R</div>
+								<div>K</div>
+								<div>J</div>
+								<div>S</div>
+							</div>
+
+							<div id="cal-days-grid" class="grid grid-cols-7 gap-y-1 gap-x-1 text-center text-xs">
+							</div>
+						</div>
+					</div>
+
+					<div class="p-6 rounded-xl bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20 text-center">
+						<div class="text-xs font-bold text-[#009788] uppercase tracking-wider mb-2">Tanggal Hijriah & Peristiwa</div>
+						<div id="hijri-result-title" class="text-xl sm:text-2xl font-extrabold text-[#111827] dark:text-white mb-1">
+							Memuat...
+						</div>
+						<div id="hijri-result-sub" class="text-xs text-[#6b7280] font-medium mb-3">
+							--
+						</div>
+						
+						<div id="islamic-event-badge" class="hidden p-3 rounded-xl bg-[#009788] text-white border border-[#009788] text-left">
+							<div class="flex items-center gap-2 text-xs font-bold text-white">
+								<span class="material-symbols-rounded text-base">verified</span>
+								<span id="event-badge-title">Hari Besar Islam</span>
+							</div>
+							<p id="event-badge-desc" class="text-xs text-white/90 mt-1 leading-relaxed font-normal">--</p>
+						</div>
+					</div>
+
+					<div class="mt-6 p-5 rounded-2xl bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20">
+						<h3 class="text-xs font-bold uppercase tracking-wider text-[#009788] flex items-center gap-1.5 mb-3">
+							<span class="material-symbols-rounded text-base">event_note</span>
+							Agenda & Hari Besar Islam
+						</h3>
+						<div id="month-events-list" class="space-y-2 text-xs">
+						</div>
+					</div>
+				</div>
+
+				<div class="p-6 rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 flex flex-col justify-between">
+					<div>
+						<div class="flex items-center justify-between mb-6">
+							<div class="flex items-center gap-3">
+								<div class="w-10 h-10 rounded-xl bg-[#009788] text-white flex items-center justify-center font-bold shadow-xs">
+									<span class="material-symbols-rounded text-2xl">explore</span>
+								</div>
+								<div>
+									<h2 class="text-base font-bold text-[#111827] dark:text-white">Penghitung Arah Kiblat</h2>
+									<p class="text-xs text-[#6b7280]">Realtime Sensor Kompas & GPS</p>
+								</div>
+							</div>
+
+							<span id="sensor-status-badge" class="px-2.5 py-1 rounded-full bg-[#009788] text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+								GPS Siap
+							</span>
+						</div>
+
+						<div class="grid grid-cols-2 gap-3 mb-4">
+							<div>
+								<label for="input-lat" class="block text-xs font-bold text-[#6b7280] uppercase tracking-wider mb-1">Latitude:</label>
+								<input id="input-lat" type="number" step="any" value="-6.2088" class="w-full bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20 rounded-xl px-3.5 py-2 text-xs font-semibold text-[#111827] dark:text-white outline-none focus:border-[#009788]" />
+							</div>
+							<div>
+								<label for="input-lon" class="block text-xs font-bold text-[#6b7280] uppercase tracking-wider mb-1">Longitude:</label>
+								<input id="input-lon" type="number" step="any" value="106.8456" class="w-full bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20 rounded-xl px-3.5 py-2 text-xs font-semibold text-[#111827] dark:text-white outline-none focus:border-[#009788]" />
+							</div>
+						</div>
+
+						<button id="btn-detect-gps" class="w-full py-2.5 px-4 rounded-xl bg-[#009788] text-white text-xs font-bold flex items-center justify-center gap-2 mb-6 cursor-pointer hover:bg-[#0d8174] transition-colors shadow-sm">
+							<span class="material-symbols-rounded text-lg">my_location</span>
+							Deteksi Otomatis Lokasi GPS Saya
+						</button>
+					</div>
+
+					<div class="p-6 rounded-2xl bg-[#f8fafc] dark:bg-gray-900 border border-[#6b7280]/20 text-center flex flex-col items-center">
+						<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider mb-3">Derajat Arah Kiblat (Ka'bah)</div>
+						
+						<div class="relative w-44 h-44 my-2 rounded-full border-4 border-[#009788]/20 bg-white dark:bg-gray-800 shadow-inner flex items-center justify-center">
+							<span class="absolute top-2 text-xs font-extrabold text-red-500 tracking-wider">N</span>
+							<span class="absolute bottom-2 text-xs font-bold text-gray-400">S</span>
+							<span class="absolute left-2.5 text-xs font-bold text-gray-400">W</span>
+							<span class="absolute right-2.5 text-xs font-bold text-gray-400">E</span>
+
+							<div class="absolute inset-2 rounded-full border border-dashed border-gray-200 dark:border-gray-700 pointer-events-none"></div>
+
+							<div id="compass-needle" class="w-2 h-36 bg-transparent flex flex-col justify-between items-center transition-transform duration-500" style="transform: rotate(295.15deg);">
+								<div class="w-8 h-8 rounded-full bg-[#009788] shadow-md flex items-center justify-center text-xs text-white font-bold ring-2 ring-white dark:ring-gray-900 transform -translate-y-1">
+									🕋
+								</div>
+								<div class="w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 shadow"></div>
+							</div>
+						</div>
+
+						<div id="qibla-degree" class="text-3xl font-mono font-extrabold text-[#009788] mt-2">
+							295.15°
+						</div>
+						<p id="qibla-distance-text" class="text-xs text-[#6b7280] mt-1 font-semibold">
+							Jarak ke Ka'bah (Mekkah): ~7,914 KM
+						</p>
+					</div>
+				</div>
+
+			</div>
+		</main>
+
+		<script>
+			const ISLAMIC_EVENTS: Record<string, { title: string; desc: string; type: string }> = {
+				'1-1': { title: "Tahun Baru Hijriah (1 Muharram)", desc: "Awal Tahun Baru Islam, peristiwa hijrah Nabi Muhammad SAW.", type: "holiday" },
+				'1-9': { title: "Puasa Sunnah Tasu'a (9 Muharram)", desc: "Puasa sunnah dianjurkan sebelum hari Asyura.", type: "sunnah" },
+				'1-10': { title: "Hari Asyura & Puasa Asyura (10 Muharram)", desc: "Hari bersejarah para nabi & kesunnahan puasa penghapus dosa setahun.", type: "sunnah" },
+				'3-12': { title: "Maulid Nabi Muhammad SAW (12 Rabiul Awal)", desc: "Peringatan hari kelahiran Rasulullah SAW.", type: "holiday" },
+				'7-27': { title: "Isra Mi'raj Nabi Muhammad SAW (27 Rajab)", desc: "Perjalanan agung Rasulullah SAW menerima perintah shalat 5 waktu.", type: "holiday" },
+				'8-15': { title: "Malam Nisfu Sya'ban (15 Sya'ban)", desc: "Malam keutamaan doa dan pengampunan dosa.", type: "special" },
+				'9-1': { title: "Awal Puasa Ramadhan (1 Ramadhan)", desc: "Hari pertama ibadah puasa wajib bulan suci Ramadhan.", type: "holiday" },
+				'9-17': { title: "Nuzulul Qur'an (17 Ramadhan)", desc: "Peringatan malam pertama kali Al-Qur'an diturunkan.", type: "special" },
+				'9-21': { title: "Malam Lailatul Qadar (Sepuluh Hari Terakhir Ramadhan)", desc: "Malam yang lebih baik dari 1.000 bulan.", type: "special" },
+				'10-1': { title: "Hari Raya Idul Fitri 1 Syawal", desc: "Hari kemenangan umat Islam setelah satu bulan berpuasa.", type: "holiday" },
+				'10-2': { title: "Hari Raya Idul Fitri Hari Ke-2 (2 Syawal)", desc: "Hari kedua perayaan Idul Fitri.", type: "holiday" },
+				'12-9': { title: "Hari Arafah & Puasa Arafah (9 Zulhijjah)", desc: "Puasa sunnah bagi yang tidak menunaikan haji, penghapus dosa 2 tahun.", type: "sunnah" },
+				'12-10': { title: "Hari Raya Idul Adha (10 Zulhijjah)", desc: "Hari Raya Kurban & ibadah penyembelihan hewan kurban.", type: "holiday" },
+				'12-11': { title: "Hari Tasyrik Ke-1 (11 Zulhijjah)", desc: "Hari makan minum dan berzikir, diharamkan berpuasa.", type: "special" },
+				'12-12': { title: "Hari Tasyrik Ke-2 (12 Zulhijjah)", desc: "Hari Tasyrik ke-2.", type: "special" },
+				'12-13': { title: "Hari Tasyrik Ke-3 (13 Zulhijjah)", desc: "Hari Tasyrik ke-3.", type: "special" },
+			};
+
+			function getHijriInfo(dateObj: Date): { month: number; day: number; key: string } {
+				try {
+					const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic-civil', {
+						month: 'numeric',
+						day: 'numeric'
+					});
+					const parts = formatter.formatToParts(dateObj);
+					const month = parseInt(parts.find(p => p.type === 'month')?.value || '1', 10);
+					const day = parseInt(parts.find(p => p.type === 'day')?.value || '1', 10);
+					return { month, day, key: `${month}-${day}` };
+				} catch (_) {
+					return { month: 1, day: 1, key: '1-1' };
+				}
+			}
+
+			const hijriTitle = document.getElementById('hijri-result-title');
+			const hijriSub = document.getElementById('hijri-result-sub');
+			const calPrevBtn = document.getElementById('cal-prev-month');
+			const calNextBtn = document.getElementById('cal-next-month');
+			const eventBadge = document.getElementById('islamic-event-badge');
+			const eventBadgeTitle = document.getElementById('event-badge-title');
+			const eventBadgeDesc = document.getElementById('event-badge-desc');
+			const monthEventsList = document.getElementById('month-events-list');
+
+			let viewYear = new Date().getFullYear();
+			let viewMonth = new Date().getMonth();
+			let selectedDate = new Date();
+
+			const monthNamesIndo = [
+				'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+				'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+			];
+
+			function updateHijriDisplay(dateObj: Date) {
+				try {
+					const hijriFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-civil', {
+						dateStyle: 'full'
+					});
+					const hijriFormatted = hijriFormatter.format(dateObj);
+
+					const ceFormatter = new Intl.DateTimeFormat('id-ID', {
+						dateStyle: 'full'
+					});
+					const ceFormatted = ceFormatter.format(dateObj);
+
+					if (hijriTitle) hijriTitle.textContent = hijriFormatted;
+					if (hijriSub) hijriSub.textContent = `Masehi: ${ceFormatted}`;
+
+					const hijriInfo = getHijriInfo(dateObj);
+					const event = ISLAMIC_EVENTS[hijriInfo.key];
+
+					if (event && eventBadge && eventBadgeTitle && eventBadgeDesc) {
+						eventBadgeTitle.textContent = event.title;
+						eventBadgeDesc.textContent = event.desc;
+						eventBadge.classList.remove('hidden');
+					} else if (eventBadge) {
+						eventBadge.classList.add('hidden');
+					}
+				} catch (err) {
+					if (hijriTitle) hijriTitle.textContent = "Gagal mengkonversi tanggal.";
+				}
+			}
+
+			function renderCustomCalendar() {
+				const monthTitle = document.getElementById('cal-month-year-title');
+				const daysGrid = document.getElementById('cal-days-grid');
+				if (!daysGrid) return;
+
+				if (monthTitle) {
+					monthTitle.textContent = `${monthNamesIndo[viewMonth]} ${viewYear}`;
+				}
+
+				const firstDayObj = new Date(viewYear, viewMonth, 1);
+				const startingDayOfWeek = firstDayObj.getDay();
+				const totalDaysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+				const prevMonthTotalDays = new Date(viewYear, viewMonth, 0).getDate();
+
+				const today = new Date();
+				const isCurrentMonthToday = today.getFullYear() === viewYear && today.getMonth() === viewMonth;
+				const todayDateNum = today.getDate();
+
+				let html = '';
+				const currentMonthEvents: { day: number; ceDate: string; event: any }[] = [];
+
+				for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+					const prevDayNum = prevMonthTotalDays - i;
+					html += `
+						<div class="h-9 flex items-center justify-center text-gray-300 dark:text-gray-600 font-medium">
+							${prevDayNum}
+						</div>
+					`;
+				}
+
+				for (let day = 1; day <= totalDaysInMonth; day++) {
+					const dayDateObj = new Date(viewYear, viewMonth, day);
+					const isSelected = selectedDate.getFullYear() === viewYear &&
+														selectedDate.getMonth() === viewMonth &&
+														selectedDate.getDate() === day;
+					const isToday = isCurrentMonthToday && day === todayDateNum;
+
+					const dateFormatted = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+					const hijriInfo = getHijriInfo(dayDateObj);
+					const event = ISLAMIC_EVENTS[hijriInfo.key];
+
+					if (event) {
+						currentMonthEvents.push({ day, ceDate: dateFormatted, event });
+					}
+
+					html += `
+						<div class="h-9 flex items-center justify-center relative">
+							<button
+								type="button"
+								data-date="${dateFormatted}"
+								class="cal-day-btn w-8 h-8 rounded-xl flex flex-col items-center justify-center font-semibold text-xs transition-all cursor-pointer relative ${
+									isSelected
+										? 'bg-[#009788] text-white font-bold shadow-md'
+										: 'text-[#111827] dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800'
+								}"
+							>
+								<span>${day}</span>
+								${event ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-[#009788]'} absolute top-0.5 right-0.5 animate-pulse" title="${event.title}"></span>` : ''}
+								${isToday && !isSelected ? '<span class="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5"></span>' : ''}
+							</button>
+						</div>
+					`;
+				}
+
+				const totalCells = startingDayOfWeek + totalDaysInMonth;
+				const remainingCells = (7 - (totalCells % 7)) % 7;
+				for (let i = 1; i <= remainingCells; i++) {
+					html += `
+						<div class="h-9 flex items-center justify-center text-gray-300 dark:text-gray-600 font-medium">
+							${i}
+						</div>
+					`;
+				}
+
+				daysGrid.innerHTML = html;
+
+				if (monthEventsList) {
+					if (currentMonthEvents.length === 0) {
+						monthEventsList.innerHTML = `<div class="text-[#6b7280]">Tidak ada peringatan hari besar Islam khusus di bulan Masehi ini.</div>`;
+					} else {
+						monthEventsList.innerHTML = currentMonthEvents.map(e => `
+							<div class="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-start gap-2.5">
+								<span class="px-2 py-1 rounded bg-[#009788]/15 text-[#009788] font-bold shrink-0">
+									${e.day} ${monthNamesIndo[viewMonth]}
+								</span>
+								<div>
+									<div class="font-bold text-[#111827] dark:text-white">${e.event.title}</div>
+									<div class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">${e.event.desc}</div>
+								</div>
+							</div>
+						`).join('');
+					}
+				}
+
+				daysGrid.querySelectorAll('.cal-day-btn').forEach((btn) => {
+					btn.addEventListener('click', (e) => {
+						const dateStr = (e.currentTarget as HTMLElement).getAttribute('data-date');
+						if (dateStr) {
+							selectedDate = new Date(dateStr + 'T00:00:00');
+							renderCustomCalendar();
+							updateHijriDisplay(selectedDate);
+						}
+					});
+				});
+			}
+
+			calPrevBtn?.addEventListener('click', () => {
+				viewMonth--;
+				if (viewMonth < 0) {
+					viewMonth = 11;
+					viewYear--;
+				}
+				renderCustomCalendar();
+			});
+
+			calNextBtn?.addEventListener('click', () => {
+				viewMonth++;
+				if (viewMonth > 11) {
+					viewMonth = 0;
+					viewYear++;
+				}
+				renderCustomCalendar();
+			});
+
+			renderCustomCalendar();
+			updateHijriDisplay(selectedDate);
+
+			const latInput = document.getElementById('input-lat') as HTMLInputElement;
+			const lonInput = document.getElementById('input-lon') as HTMLInputElement;
+			const qiblaDegree = document.getElementById('qibla-degree');
+			const qiblaDistanceText = document.getElementById('qibla-distance-text');
+			const compassNeedle = document.getElementById('compass-needle');
+			const btnGps = document.getElementById('btn-detect-gps');
+			const sensorBadge = document.getElementById('sensor-status-badge');
+
+			function calcQiblaAngle(lat: number, lon: number): number {
+				const latR = (lat * Math.PI) / 180;
+				const lonR = (lon * Math.PI) / 180;
+				const meccaLat = (21.422487 * Math.PI) / 180;
+				const meccaLon = (39.826206 * Math.PI) / 180;
+
+				const dLon = meccaLon - lonR;
+				const y = Math.sin(dLon);
+				const x = Math.cos(latR) * Math.tan(meccaLat) - Math.sin(latR) * Math.cos(dLon);
+
+				let qibla = (Math.atan2(y, x) * 180) / Math.PI;
+				return (qibla + 360) % 360;
+			}
+
+			function calcDistanceToMecca(lat: number, lon: number): number {
+				const R = 6371;
+				const latR = (lat * Math.PI) / 180;
+				const meccaLat = (21.422487 * Math.PI) / 180;
+				const dLat = ((21.422487 - lat) * Math.PI) / 180;
+				const dLon = ((39.826206 - lon) * Math.PI) / 180;
+
+				const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+				          Math.cos(latR) * Math.cos(meccaLat) *
+				          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+				const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				return Math.round(R * c);
+			}
+
+			let targetQiblaDegree = 295.15;
+
+			function updateQibla() {
+				if (!latInput || !lonInput || !qiblaDegree) return;
+				const lat = parseFloat(latInput.value);
+				const lon = parseFloat(lonInput.value);
+				if (isNaN(lat) || isNaN(lon)) return;
+
+				targetQiblaDegree = calcQiblaAngle(lat, lon);
+				const formattedAngle = targetQiblaDegree.toFixed(2);
+				const dist = calcDistanceToMecca(lat, lon);
+
+				qiblaDegree.textContent = `${formattedAngle}°`;
+				if (qiblaDistanceText) {
+					qiblaDistanceText.textContent = `Jarak ke Ka'bah (Mekkah): ~${dist.toLocaleString('id-ID')} KM`;
+				}
+				if (compassNeedle) {
+					compassNeedle.style.transform = `rotate(${formattedAngle}deg)`;
+				}
+			}
+
+			latInput?.addEventListener('input', updateQibla);
+			lonInput?.addEventListener('input', updateQibla);
+
+			btnGps?.addEventListener('click', () => {
+				if (navigator.geolocation) {
+					btnGps.innerHTML = `<span class="material-symbols-rounded text-lg animate-spin">sync</span> Mengambil lokasi GPS...`;
+					navigator.geolocation.getCurrentPosition(
+						(pos) => {
+							latInput.value = pos.coords.latitude.toFixed(4);
+							lonInput.value = pos.coords.longitude.toFixed(4);
+							updateQibla();
+							btnGps.innerHTML = `<span class="material-symbols-rounded text-lg">my_location</span> Deteksi Otomatis Lokasi GPS Saya`;
+							if (sensorBadge) sensorBadge.textContent = "GPS Terkoneksi";
+						},
+						(err) => {
+							alert("Gagal mengakses GPS: " + err.message);
+							btnGps.innerHTML = `<span class="material-symbols-rounded text-lg">my_location</span> Deteksi Otomatis Lokasi GPS Saya`;
+						}
+					);
+				} else {
+					alert("Browser Anda tidak mendukung geolokasi GPS.");
+				}
+			});
+
+			if (window.DeviceOrientationEvent) {
+				window.addEventListener('deviceorientation', (e: any) => {
+					let heading = e.alpha;
+					if (e.webkitCompassHeading) {
+						heading = e.webkitCompassHeading;
+					}
+					if (heading !== null && heading !== undefined && compassNeedle) {
+						const relativeQibla = (targetQiblaDegree - heading + 360) % 360;
+						compassNeedle.style.transform = `rotate(${relativeQibla}deg)`;
+						if (sensorBadge) sensorBadge.textContent = "Sensor Kompas Aktif";
+					}
+				}, true);
+			}
+
+			updateQibla();
+		</script>
+	</body>
+</html>

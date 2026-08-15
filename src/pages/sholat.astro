@@ -1,0 +1,477 @@
+---
+import "../styles/global.css";
+import Navbar from "../layouts/navbar.astro";
+import { SholatService } from "../lib/api/sholat";
+
+let allKota: any[] = [];
+let defaultJadwalData: any = null;
+let defaultJadwal: any = null;
+let defaultKabkoName = "KOTA JAKARTA";
+let defaultProvName = "DKI JAKARTA";
+
+try {
+  const kotaRes = await SholatService.getAllKota();
+  if (kotaRes && kotaRes.data && Array.isArray(kotaRes.data)) {
+    allKota = kotaRes.data;
+  }
+  
+  // Default to Jakarta
+  const jakartaId = "58a2fc6ed39fd083f55d4182bf88826d";
+  const jadwalRes = await SholatService.getJadwalToday(jakartaId);
+  if (jadwalRes && jadwalRes.data) {
+    defaultJadwalData = jadwalRes.data;
+    defaultKabkoName = jadwalRes.data.kabko || "KOTA JAKARTA";
+    defaultProvName = jadwalRes.data.prov || "DKI JAKARTA";
+    const key = Object.keys(jadwalRes.data.jadwal || {})[0];
+    defaultJadwal = key ? jadwalRes.data.jadwal[key] : jadwalRes.data.jadwal;
+  }
+} catch (_) {}
+---
+
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Jadwal Shalat Indonesia - Tartiliya</title>
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+		
+		<script is:inline>
+			const theme = localStorage.getItem('theme');
+			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+	</head>
+	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
+		<Navbar />
+		
+		<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
+			<div class="rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 p-6 sm:p-8 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+				<div>
+					<div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+						<span class="material-symbols-rounded text-sm">verified</span>
+						Jadwal Shalat Resmi Kemenag RI
+					</div>
+					<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1">
+						Jadwal Shalat Hari Ini
+					</h1>
+					<p id="selected-city-subtitle" class="text-sm text-[#6b7280] font-normal flex items-center gap-1">
+						<span class="material-symbols-rounded text-base text-[#009788]">location_on</span>
+						<span id="display-kabko">{defaultKabkoName}</span>, <span id="display-prov">{defaultProvName}</span>
+					</p>
+				</div>
+
+				<div class="relative w-full md:w-80" id="city-dropdown-root">
+					<label class="block text-xs font-bold text-[#6b7280] uppercase tracking-wider mb-1.5">
+						Pilih Kabupaten / Kota
+					</label>
+					
+					<button 
+						type="button" 
+						id="city-dropdown-trigger"
+						class="w-full flex items-center justify-between gap-2 bg-[#f8fafc] dark:bg-gray-900 text-[#111827] dark:text-white border border-[#6b7280]/30 hover:border-[#009788] font-semibold text-xs sm:text-sm rounded-xl px-4 py-2.5 shadow-sm transition-all cursor-pointer outline-none"
+						aria-haspopup="listbox"
+						aria-expanded="false"
+					>
+						<div class="flex items-center gap-2 truncate">
+							<span class="material-symbols-rounded text-[#009788] text-lg">location_city</span>
+							<span id="selected-city-label" class="truncate">{defaultKabkoName}</span>
+						</div>
+						<span id="dropdown-chevron" class="material-symbols-rounded text-gray-400 text-lg transition-transform duration-200">expand_more</span>
+					</button>
+
+					<div 
+						id="city-dropdown-menu" 
+						class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl overflow-hidden p-2 transition-all"
+					>
+						<div class="relative p-1 mb-2">
+							<span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+							<input 
+								type="text" 
+								id="city-search-input" 
+								placeholder="Cari kota / kab... (cth: Kediri)" 
+								autocomplete="off"
+								class="w-full bg-[#f8fafc] dark:bg-gray-900 text-[#111827] dark:text-white text-xs sm:text-sm rounded-xl pl-9 pr-8 py-2 border border-gray-200 dark:border-gray-700 outline-none focus:border-[#009788] transition-colors"
+							/>
+							<button 
+								id="clear-city-search" 
+								class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+							>
+								<span class="material-symbols-rounded text-base">close</span>
+							</button>
+						</div>
+
+						<div id="city-list-container" class="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar pr-1">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mb-6 p-5 rounded-2xl bg-gradient-to-r from-[#009788] to-[#0d8174] text-white shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+				<div class="flex items-center gap-3 text-center sm:text-left">
+					<div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+						<span class="material-symbols-rounded text-3xl">notifications_active</span>
+					</div>
+					<div>
+						<div class="text-xs font-bold uppercase tracking-wider text-emerald-100">Menuju Waktu Shalat Berikutnya</div>
+						<div id="next-prayer-info" class="text-lg font-extrabold flex items-center gap-2 mt-0.5">
+							<span id="next-prayer-name">Shalat ...</span>
+							<span id="next-prayer-countdown" class="font-mono text-xs sm:text-sm bg-white/20 px-2 py-0.5 rounded-md font-bold">--:--:--</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="flex items-center gap-2">
+					<button id="btn-test-adzan-page" class="px-3.5 py-2 rounded-xl bg-white text-[#009788] hover:bg-emerald-50 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
+						<span class="material-symbols-rounded text-base">volume_up</span>
+						Tes Suara Adzan
+					</button>
+				</div>
+			</div>
+
+			<div id="prayer-cards-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-8">
+				<div data-prayer="imsak" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_twilight</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Imsak</div>
+					<div id="time-imsak" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.imsak || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="subuh" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">nights_stay</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Subuh</div>
+					<div id="time-subuh" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.subuh || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="terbit" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_sunny</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Terbit</div>
+					<div id="time-terbit" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.terbit || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="dhuha" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_sunny</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Dhuha</div>
+					<div id="time-dhuha" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.dhuha || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="dzuhur" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">sunny</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Dzuhur</div>
+					<div id="time-dzuhur" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.dzuhur || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="ashar" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_twilight</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Ashar</div>
+					<div id="time-ashar" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.ashar || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="maghrib" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">bedtime</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Maghrib</div>
+					<div id="time-maghrib" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.maghrib || '--:--'}
+					</div>
+				</div>
+
+				<div data-prayer="isya" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">dark_mode</span>
+					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Isya</div>
+					<div id="time-isya" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+						{defaultJadwal?.isya || '--:--'}
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<script is:inline define:vars={{ initialKota: allKota, defaultCityId: "58a2fc6ed39fd083f55d4182bf88826d" }}>
+			window.ALL_KOTA = initialKota || [];
+			window.CURRENT_CITY_ID = defaultCityId;
+		</script>
+
+		<script>
+			import { SholatService } from "../lib/api/sholat";
+
+			let allKota = (window as any).ALL_KOTA || [];
+			let selectedCityId = (window as any).CURRENT_CITY_ID || "58a2fc6ed39fd083f55d4182bf88826d";
+
+			const dropdownRoot = document.getElementById('city-dropdown-root');
+			const dropdownTrigger = document.getElementById('city-dropdown-trigger');
+			const dropdownMenu = document.getElementById('city-dropdown-menu');
+			const dropdownChevron = document.getElementById('dropdown-chevron');
+			const selectedCityLabel = document.getElementById('selected-city-label');
+			const searchInput = document.getElementById('city-search-input') as HTMLInputElement;
+			const clearSearchBtn = document.getElementById('clear-city-search');
+			const listContainer = document.getElementById('city-list-container');
+
+			const displayKabko = document.getElementById('display-kabko');
+			const displayProv = document.getElementById('display-prov');
+
+			const elImsak = document.getElementById('time-imsak');
+			const elSubuh = document.getElementById('time-subuh');
+			const elTerbit = document.getElementById('time-terbit');
+			const elDhuha = document.getElementById('time-dhuha');
+			const elDzuhur = document.getElementById('time-dzuhur');
+			const elAshar = document.getElementById('time-ashar');
+			const elMaghrib = document.getElementById('time-maghrib');
+			const elIsya = document.getElementById('time-isya');
+
+			if (!allKota || allKota.length === 0) {
+				SholatService.getAllKota().then(res => {
+					if (res && res.data && Array.isArray(res.data)) {
+						allKota = res.data;
+						renderCityList(allKota);
+					}
+				});
+			}
+
+			function renderCityList(cities: any[]) {
+				if (!listContainer) return;
+
+				if (cities.length === 0) {
+					listContainer.innerHTML = `
+						<div class="px-4 py-6 text-center text-xs text-gray-400">
+							<span class="material-symbols-rounded text-2xl text-gray-300 dark:text-gray-600 mb-1 block">search_off</span>
+							Kota / Kabupaten tidak ditemukan
+						</div>
+					`;
+					return;
+				}
+
+				listContainer.innerHTML = cities.map(city => {
+					const isSelected = city.id === selectedCityId;
+					return `
+						<button 
+							type="button"
+							data-id="${city.id}" 
+							data-[#009788]="${city.lokasi}"
+							class="city-option-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors text-left cursor-pointer ${
+								isSelected 
+									? 'bg-[#009788]/10 text-[#009788] dark:bg-[#009788]/20 dark:text-[#009788]' 
+									: 'text-[#111827] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
+							}"
+						>
+							<div class="flex items-center gap-2 truncate">
+								<span class="material-symbols-rounded text-base ${isSelected ? 'text-[#009788]' : 'text-gray-400'}">location_on</span>
+								<span class="truncate">${city.lokasi}</span>
+							</div>
+							${isSelected ? '<span class="material-symbols-rounded text-base text-[#009788]">check</span>' : ''}
+						</button>
+					`;
+				}).join('');
+
+				listContainer.querySelectorAll('.city-option-btn').forEach(btn => {
+					btn.addEventListener('click', (e) => {
+						const target = e.currentTarget as HTMLElement;
+						const id = target.getAttribute('data-id');
+						const lokasi = target.getAttribute('data-[#009788]') || target.textContent?.trim() || '';
+						if (id) {
+							selectCity(id, lokasi);
+						}
+					});
+				});
+			}
+
+			async function selectCity(cityId: string, cityLokasi: string) {
+				selectedCityId = cityId;
+				if (selectedCityLabel) selectedCityLabel.textContent = cityLokasi;
+				closeDropdown();
+				renderCityList(allKota);
+
+				try {
+					const res = await SholatService.getJadwalToday(cityId);
+					if (res && res.data) {
+						const kabko = res.data.kabko;
+						const prov = res.data.prov;
+						const jadwal: any = res.data.jadwal;
+						
+						const firstKey = Object.keys(jadwal || {})[0];
+						const data = firstKey ? jadwal[firstKey] : jadwal;
+
+						if (displayKabko) displayKabko.textContent = kabko || cityLokasi;
+						if (displayProv) displayProv.textContent = prov || '';
+
+						if (data) {
+							if (elImsak) elImsak.textContent = data.imsak || '--:--';
+							if (elSubuh) elSubuh.textContent = data.subuh || '--:--';
+							if (elTerbit) elTerbit.textContent = data.terbit || '--:--';
+							if (elDhuha) elDhuha.textContent = data.dhuha || '--:--';
+							if (elDzuhur) elDzuhur.textContent = data.dzuhur || '--:--';
+							if (elAshar) elAshar.textContent = data.ashar || '--:--';
+							if (elMaghrib) elMaghrib.textContent = data.maghrib || '--:--';
+							if (elIsya) elIsya.textContent = data.isya || '--:--';
+
+							try {
+								localStorage.setItem('todayJadwalData', JSON.stringify({
+									subuh: data.subuh,
+									dzuhur: data.dzuhur,
+									ashar: data.ashar,
+									maghrib: data.maghrib,
+									isya: data.isya
+								}));
+							} catch (_) {}
+
+							updateNextPrayerInfo(data);
+						}
+					}
+				} catch (err) {
+					console.error("Gagal mengambil jadwal:", err);
+				}
+			}
+
+			function updateNextPrayerInfo(jadwal: any) {
+				const nextPrayerNameEl = document.getElementById('next-prayer-name');
+				const nextPrayerCountdownEl = document.getElementById('next-prayer-countdown');
+				const prayerCards = document.querySelectorAll('.prayer-card');
+
+				if (!jadwal) return;
+
+				const now = new Date();
+				const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+				const timesMap: { name: string; label: string; time: string; minutes: number }[] = [
+					{ name: 'subuh', label: 'Subuh', time: jadwal.subuh, minutes: parseTimeToMinutes(jadwal.subuh) },
+					{ name: 'dzuhur', label: 'Dzuhur', time: jadwal.dzuhur, minutes: parseTimeToMinutes(jadwal.dzuhur) },
+					{ name: 'ashar', label: 'Ashar', time: jadwal.ashar, minutes: parseTimeToMinutes(jadwal.ashar) },
+					{ name: 'maghrib', label: 'Maghrib', time: jadwal.maghrib, minutes: parseTimeToMinutes(jadwal.maghrib) },
+					{ name: 'isya', label: 'Isya', time: jadwal.isya, minutes: parseTimeToMinutes(jadwal.isya) },
+				];
+
+				function parseTimeToMinutes(tStr: string): number {
+					if (!tStr || !tStr.includes(':')) return 0;
+					const [h, m] = tStr.split(':').map(Number);
+					return h * 60 + m;
+				}
+
+				prayerCards.forEach(c => {
+					c.classList.remove('border-[#009788]', 'bg-[#009788]/10', 'ring-2', 'ring-[#009788]');
+				});
+
+				let nextObj = timesMap.find(t => t.minutes > currentMinutes);
+				if (!nextObj) {
+					nextObj = { ...timesMap[0], label: 'Subuh (Besok)', minutes: timesMap[0].minutes + 24 * 60 };
+				}
+
+				if (nextPrayerNameEl) nextPrayerNameEl.textContent = `Shalat ${nextObj.label} (${nextObj.time})`;
+
+				const targetCard = document.querySelector(`[data-prayer="${nextObj.name}"]`);
+				if (targetCard) {
+					targetCard.classList.add('border-[#009788]', 'bg-[#009788]/10', 'ring-2', 'ring-[#009788]');
+				}
+
+				const diffMinutes = nextObj.minutes - currentMinutes;
+				const diffHours = Math.floor(diffMinutes / 60);
+				const remMinutes = diffMinutes % 60;
+				const remSeconds = 59 - now.getSeconds();
+
+				if (nextPrayerCountdownEl) {
+					nextPrayerCountdownEl.textContent = `${String(diffHours).padStart(2, '0')}:${String(remMinutes).padStart(2, '0')}:${String(remSeconds).padStart(2, '0')}`;
+				}
+			}
+
+			document.getElementById('btn-test-adzan-page')?.addEventListener('click', () => {
+				const toast = document.getElementById('adzan-toast');
+				const title = document.getElementById('adzan-prayer-title');
+				const sub = document.getElementById('adzan-sub-text');
+				if (title) title.textContent = "Uji Coba Suara Adzan";
+				if (sub) sub.textContent = "Suara Adzan berfungsi dengan baik untuk mengingatkan Anda saat waktu shalat tiba.";
+				toast?.classList.remove('hidden');
+				document.getElementById('btn-play-adzan')?.click();
+			});
+
+			function openDropdown() {
+				dropdownMenu?.classList.remove('hidden');
+				dropdownTrigger?.setAttribute('aria-expanded', 'true');
+				dropdownChevron?.classList.add('rotate-180');
+				if (searchInput) {
+					searchInput.value = '';
+					searchInput.focus();
+				}
+				if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
+				renderCityList(allKota);
+			}
+
+			function closeDropdown() {
+				dropdownMenu?.classList.add('hidden');
+				dropdownTrigger?.setAttribute('aria-expanded', 'false');
+				dropdownChevron?.classList.remove('rotate-180');
+			}
+
+			dropdownTrigger?.addEventListener('click', () => {
+				const isExpanded = dropdownTrigger.getAttribute('aria-expanded') === 'true';
+				if (isExpanded) {
+					closeDropdown();
+				} else {
+					openDropdown();
+				}
+			});
+
+			searchInput?.addEventListener('input', async () => {
+				const query = searchInput.value.trim().toLowerCase();
+
+				if (query) {
+					clearSearchBtn?.classList.remove('hidden');
+				} else {
+					clearSearchBtn?.classList.add('hidden');
+				}
+
+				const filtered = allKota.filter(c => c.lokasi.toLowerCase().includes(query));
+				
+				if (filtered.length > 0) {
+					renderCityList(filtered);
+				} else if (query.length >= 3) {
+					try {
+						const searchRes = await SholatService.searchKota(query);
+						if (searchRes && searchRes.data && Array.isArray(searchRes.data)) {
+							renderCityList(searchRes.data);
+						} else {
+							renderCityList([]);
+						}
+					} catch (_) {
+						renderCityList([]);
+					}
+				} else {
+					renderCityList([]);
+				}
+			});
+
+			clearSearchBtn?.addEventListener('click', () => {
+				if (searchInput) searchInput.value = '';
+				clearSearchBtn.classList.add('hidden');
+				renderCityList(allKota);
+				searchInput?.focus();
+			});
+
+			document.addEventListener('click', (e) => {
+				if (dropdownRoot && !dropdownRoot.contains(e.target as Node)) {
+					closeDropdown();
+				}
+			});
+
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape') {
+					closeDropdown();
+				}
+			});
+
+			renderCityList(allKota);
+		</script>
+	</body>
+</html>
