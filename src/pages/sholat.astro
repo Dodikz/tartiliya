@@ -15,7 +15,6 @@ try {
     allKota = kotaRes.data;
   }
   
-  // Default to Jakarta
   const jakartaId = "58a2fc6ed39fd083f55d4182bf88826d";
   const jadwalRes = await SholatService.getJadwalToday(jakartaId);
   if (jadwalRes && jadwalRes.data) {
@@ -42,7 +41,7 @@ try {
 		
 		<script is:inline>
 			const theme = localStorage.getItem('theme');
-			if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			if (theme === 'dark') {
 				document.documentElement.classList.add('dark');
 			}
 		</script>
@@ -50,31 +49,31 @@ try {
 	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
 		<Navbar />
 		
-		<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
-			<div class="rounded-2xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 p-6 sm:p-8 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+		<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 md:pb-12">
+			<div class="rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
 				<div>
-					<div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+					<div class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-3">
 						<span class="material-symbols-rounded text-sm">verified</span>
 						Jadwal Shalat Resmi Kemenag RI
 					</div>
-					<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1">
+					<h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-1.5">
 						Jadwal Shalat Hari Ini
 					</h1>
-					<p id="selected-city-subtitle" class="text-sm text-[#6b7280] font-normal flex items-center gap-1">
-						<span class="material-symbols-rounded text-base text-[#009788]">location_on</span>
+					<p id="selected-city-subtitle" class="text-sm text-gray-600 dark:text-gray-300 font-medium flex items-center gap-1.5">
+						<span class="material-symbols-rounded text-lg text-[#009788]">location_on</span>
 						<span id="display-kabko">{defaultKabkoName}</span>, <span id="display-prov">{defaultProvName}</span>
 					</p>
 				</div>
 
 				<div class="relative w-full md:w-80" id="city-dropdown-root">
-					<label class="block text-xs font-bold text-[#6b7280] uppercase tracking-wider mb-1.5">
+					<label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
 						Pilih Kabupaten / Kota
 					</label>
 					
 					<button 
 						type="button" 
 						id="city-dropdown-trigger"
-						class="w-full flex items-center justify-between gap-2 bg-[#f8fafc] dark:bg-gray-900 text-[#111827] dark:text-white border border-[#6b7280]/30 hover:border-[#009788] font-semibold text-xs sm:text-sm rounded-xl px-4 py-2.5 shadow-sm transition-all cursor-pointer outline-none"
+						class="w-full flex items-center justify-between gap-2 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:border-[#009788] font-semibold text-xs sm:text-sm rounded-xl px-4 py-2.5 shadow-2xs transition-all cursor-pointer outline-none"
 						aria-haspopup="listbox"
 						aria-expanded="false"
 					>
@@ -94,9 +93,9 @@ try {
 							<input 
 								type="text" 
 								id="city-search-input" 
-								placeholder="Cari kota / kab... (cth: Kediri)" 
+								placeholder="Cari kota / kab... (cth: Kediri, Surabaya)" 
 								autocomplete="off"
-								class="w-full bg-[#f8fafc] dark:bg-gray-900 text-[#111827] dark:text-white text-xs sm:text-sm rounded-xl pl-9 pr-8 py-2 border border-gray-200 dark:border-gray-700 outline-none focus:border-[#009788] transition-colors"
+								class="w-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-xs sm:text-sm rounded-xl pl-9 pr-8 py-2 border border-gray-200 dark:border-gray-700 outline-none focus:border-[#009788] transition-colors"
 							/>
 							<button 
 								id="clear-city-search" 
@@ -112,89 +111,82 @@ try {
 				</div>
 			</div>
 
-			<div class="mb-6 p-5 rounded-2xl bg-gradient-to-r from-[#009788] to-[#0d8174] text-white shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-				<div class="flex items-center gap-3 text-center sm:text-left">
-					<div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+			<div class="mb-8 p-5 rounded-2xl bg-[#009788] text-white shadow-md flex items-center justify-between gap-4">
+				<div class="flex items-center gap-3.5">
+					<div class="w-12 h-12 bg-white/20 flex items-center justify-center shrink-0">
 						<span class="material-symbols-rounded text-3xl">notifications_active</span>
 					</div>
 					<div>
 						<div class="text-xs font-bold uppercase tracking-wider text-emerald-100">Menuju Waktu Shalat Berikutnya</div>
-						<div id="next-prayer-info" class="text-lg font-extrabold flex items-center gap-2 mt-0.5">
+						<div id="next-prayer-info" class="text-lg sm:text-xl font-extrabold flex items-center gap-2 mt-0.5">
 							<span id="next-prayer-name">Shalat ...</span>
-							<span id="next-prayer-countdown" class="font-mono text-xs sm:text-sm bg-white/20 px-2 py-0.5 rounded-md font-bold">--:--:--</span>
+							<span id="next-prayer-countdown" class="font-mono text-xs sm:text-sm bg-white/25 px-2.5 py-0.5 rounded-md font-bold">--:--:--</span>
 						</div>
 					</div>
 				</div>
-
-				<div class="flex items-center gap-2">
-					<button id="btn-test-adzan-page" class="px-3.5 py-2 rounded-xl bg-white text-[#009788] hover:bg-emerald-50 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
-						<span class="material-symbols-rounded text-base">volume_up</span>
-						Tes Suara Adzan
-					</button>
-				</div>
 			</div>
 
-			<div id="prayer-cards-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-8">
-				<div data-prayer="imsak" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+			<div id="prayer-cards-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3.5 mb-8">
+				<div data-prayer="imsak" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_twilight</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Imsak</div>
-					<div id="time-imsak" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Imsak</div>
+					<div id="time-imsak" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.imsak || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="subuh" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="subuh" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">nights_stay</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Subuh</div>
-					<div id="time-subuh" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Subuh</div>
+					<div id="time-subuh" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.subuh || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="terbit" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="terbit" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_sunny</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Terbit</div>
-					<div id="time-terbit" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Terbit</div>
+					<div id="time-terbit" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.terbit || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="dhuha" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="dhuha" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_sunny</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Dhuha</div>
-					<div id="time-dhuha" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dhuha</div>
+					<div id="time-dhuha" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.dhuha || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="dzuhur" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="dzuhur" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">sunny</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Dzuhur</div>
-					<div id="time-dzuhur" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dzuhur</div>
+					<div id="time-dzuhur" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.dzuhur || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="ashar" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="ashar" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">wb_twilight</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Ashar</div>
-					<div id="time-ashar" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ashar</div>
+					<div id="time-ashar" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.ashar || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="maghrib" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="maghrib" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">bedtime</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Maghrib</div>
-					<div id="time-maghrib" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Maghrib</div>
+					<div id="time-maghrib" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.maghrib || '--:--'}
 					</div>
 				</div>
 
-				<div data-prayer="isya" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#111827] border border-[#6b7280]/20 text-center transition-all duration-200">
+				<div data-prayer="isya" class="prayer-card p-4 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 text-center transition-all duration-200 shadow-2xs">
 					<span class="material-symbols-rounded text-2xl text-[#009788] mb-1">dark_mode</span>
-					<div class="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Isya</div>
-					<div id="time-isya" class="text-base font-mono font-extrabold text-[#111827] dark:text-white mt-1">
+					<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Isya</div>
+					<div id="time-isya" class="text-base font-mono font-extrabold text-gray-900 dark:text-white mt-1">
 						{defaultJadwal?.isya || '--:--'}
 					</div>
 				</div>
@@ -210,7 +202,7 @@ try {
 			import { SholatService } from "../lib/api/sholat";
 
 			let allKota = (window as any).ALL_KOTA || [];
-			let selectedCityId = (window as any).CURRENT_CITY_ID || "58a2fc6ed39fd083f55d4182bf88826d";
+			let selectedCityId = localStorage.getItem('selectedCityId') || (window as any).CURRENT_CITY_ID || "58a2fc6ed39fd083f55d4182bf88826d";
 
 			const dropdownRoot = document.getElementById('city-dropdown-root');
 			const dropdownTrigger = document.getElementById('city-dropdown-trigger');
@@ -233,13 +225,47 @@ try {
 			const elMaghrib = document.getElementById('time-maghrib');
 			const elIsya = document.getElementById('time-isya');
 
+			async function detectUserLocation() {
+				if (localStorage.getItem('selectedCityId')) {
+					const savedId = localStorage.getItem('selectedCityId')!;
+					const savedName = localStorage.getItem('selectedCityName');
+					if (savedId && savedId !== (window as any).CURRENT_CITY_ID) {
+						selectCity(savedId, savedName || 'Kota Anda');
+					}
+					return;
+				}
+
+				if ('geolocation' in navigator) {
+					navigator.geolocation.getCurrentPosition(async (position) => {
+						try {
+							const { latitude, longitude } = position.coords;
+							const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+							if (geoRes.ok) {
+								const geoData = await geoRes.json();
+								const cityOrRegency = geoData.address?.city || geoData.address?.county || geoData.address?.state_district || '';
+								if (cityOrRegency && allKota.length > 0) {
+									const cleanSearch = cityOrRegency.toLowerCase().replace(/^(kota|kabupaten|kab\.?)\s+/i, '').trim();
+									const matched = allKota.find(c => c.lokasi.toLowerCase().includes(cleanSearch));
+									if (matched) {
+										selectCity(matched.id, matched.lokasi);
+									}
+								}
+							}
+						} catch (_) {}
+					}, () => {}, { timeout: 8000 });
+				}
+			}
+
 			if (!allKota || allKota.length === 0) {
 				SholatService.getAllKota().then(res => {
 					if (res && res.data && Array.isArray(res.data)) {
 						allKota = res.data;
 						renderCityList(allKota);
+						detectUserLocation();
 					}
 				});
+			} else {
+				detectUserLocation();
 			}
 
 			function renderCityList(cities: any[]) {
@@ -259,13 +285,13 @@ try {
 					const isSelected = city.id === selectedCityId;
 					return `
 						<button 
-							type="button"
+							type="button" 
 							data-id="${city.id}" 
-							data-[#009788]="${city.lokasi}"
+							data-lokasi="${city.lokasi}"
 							class="city-option-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors text-left cursor-pointer ${
 								isSelected 
 									? 'bg-[#009788]/10 text-[#009788] dark:bg-[#009788]/20 dark:text-[#009788]' 
-									: 'text-[#111827] dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
+									: 'text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
 							}"
 						>
 							<div class="flex items-center gap-2 truncate">
@@ -281,7 +307,7 @@ try {
 					btn.addEventListener('click', (e) => {
 						const target = e.currentTarget as HTMLElement;
 						const id = target.getAttribute('data-id');
-						const lokasi = target.getAttribute('data-[#009788]') || target.textContent?.trim() || '';
+						const lokasi = target.getAttribute('data-lokasi') || target.textContent?.trim() || '';
 						if (id) {
 							selectCity(id, lokasi);
 						}
@@ -291,6 +317,9 @@ try {
 
 			async function selectCity(cityId: string, cityLokasi: string) {
 				selectedCityId = cityId;
+				localStorage.setItem('selectedCityId', cityId);
+				localStorage.setItem('selectedCityName', cityLokasi);
+
 				if (selectedCityLabel) selectedCityLabel.textContent = cityLokasi;
 				closeDropdown();
 				renderCityList(allKota);
@@ -385,16 +414,6 @@ try {
 					nextPrayerCountdownEl.textContent = `${String(diffHours).padStart(2, '0')}:${String(remMinutes).padStart(2, '0')}:${String(remSeconds).padStart(2, '0')}`;
 				}
 			}
-
-			document.getElementById('btn-test-adzan-page')?.addEventListener('click', () => {
-				const toast = document.getElementById('adzan-toast');
-				const title = document.getElementById('adzan-prayer-title');
-				const sub = document.getElementById('adzan-sub-text');
-				if (title) title.textContent = "Uji Coba Suara Adzan";
-				if (sub) sub.textContent = "Suara Adzan berfungsi dengan baik untuk mengingatkan Anda saat waktu shalat tiba.";
-				toast?.classList.remove('hidden');
-				document.getElementById('btn-play-adzan')?.click();
-			});
 
 			function openDropdown() {
 				dropdownMenu?.classList.remove('hidden');
