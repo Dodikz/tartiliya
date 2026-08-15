@@ -217,7 +217,8 @@ const nextSurah = surahNumber < 114 ? SURAH_LIST[surahNumber] : null;
 						ayah: ayah
 					}));
 
-					alert(`Ditandai: Surah ${name} Ayat ${ayah} sebagai terakhir dibaca!`);
+
+					showToast(`Ditandai: Surah ${name} Ayat ${ayah} sebagai terakhir dibaca`);
 				});
 			});
 
@@ -252,6 +253,25 @@ const nextSurah = surahNumber < 114 ? SURAH_LIST[surahNumber] : null;
 				tafsirOverlay?.classList.add('hidden');
 				tafsirModal?.classList.add('hidden');
 			});
+			function showToast(message: string) {
+				const toast = document.getElementById('toast-notif');
+				const toastMsg = document.getElementById('toast-message');
+				if (!toast || !toastMsg) return;
+				toastMsg.textContent = message;
+				toast.classList.remove('translate-y-full', 'opacity-0');
+				toast.classList.add('translate-y-0', 'opacity-100');
+				setTimeout(() => {
+					toast.classList.remove('translate-y-0', 'opacity-100');
+					toast.classList.add('translate-y-full', 'opacity-0');
+				}, 2500);
+			}
 		</script>
+
+		<div id="toast-notif" class="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 translate-y-full opacity-0 z-[9999] transition-all duration-300 ease-out pointer-events-none">
+			<div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-[#009788] text-white text-sm font-semibold shadow-lg shadow-[#009788]/25">
+				<span class="material-symbols-rounded text-lg">bookmark_added</span>
+				<span id="toast-message"></span>
+			</div>
+		</div>
 	</body>
 </html>
