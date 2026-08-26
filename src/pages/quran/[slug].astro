@@ -59,6 +59,16 @@ function toArabicNumerals(num: number): string {
 			if (theme === 'dark') {
 				document.documentElement.classList.add('dark');
 			}
+			if ('fonts' in document) {
+				document.fonts.ready.then(() => {
+					document.documentElement.classList.add('fonts-loaded');
+				});
+				setTimeout(() => {
+					document.documentElement.classList.add('fonts-loaded');
+				}, 1500);
+			} else {
+				document.documentElement.classList.add('fonts-loaded');
+			}
 		</script>
 
 		<style>

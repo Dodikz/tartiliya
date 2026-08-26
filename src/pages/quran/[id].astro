@@ -51,6 +51,16 @@ const nextSurah = surahNumber < 114 ? SURAH_LIST[surahNumber] : null;
 			if (theme === 'dark') {
 				document.documentElement.classList.add('dark');
 			}
+			if ('fonts' in document) {
+				document.fonts.ready.then(() => {
+					document.documentElement.classList.add('fonts-loaded');
+				});
+				setTimeout(() => {
+					document.documentElement.classList.add('fonts-loaded');
+				}, 1500);
+			} else {
+				document.documentElement.classList.add('fonts-loaded');
+			}
 		</script>
 	</head>
 	<body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-300">

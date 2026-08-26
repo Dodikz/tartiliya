@@ -47,8 +47,18 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
     
     <script is:inline>
       const theme = localStorage.getItem('theme');
-      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      if (theme === 'dark') {
         document.documentElement.classList.add('dark');
+      }
+      if ('fonts' in document) {
+        document.fonts.ready.then(() => {
+          document.documentElement.classList.add('fonts-loaded');
+        });
+        setTimeout(() => {
+          document.documentElement.classList.add('fonts-loaded');
+        }, 1500);
+      } else {
+        document.documentElement.classList.add('fonts-loaded');
       }
     </script>
   </head>
