@@ -51,9 +51,39 @@ import Navbar from "../layouts/navbar.astro";
 				</p>
 			</div>
 
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-				<div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 flex flex-col justify-between shadow-xs">
-					<div>
+			<div id="today-agenda-banner" class="rounded-2xl bg-white dark:bg-[#1f2937] border-2 border-[#009788] p-5 sm:p-6 mb-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+				<div class="flex items-start sm:items-center gap-3.5 min-w-0">
+					<div class="w-11 h-11 rounded-xl bg-[#009788] text-white flex items-center justify-center shrink-0 shadow-xs">
+						<span class="material-symbols-rounded text-2xl">notifications_active</span>
+					</div>
+					<div class="min-w-0">
+						<div class="flex items-center gap-2 mb-0.5">
+							<span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-[#009788] rounded-md">
+								Pengingat Agenda Hari Ini
+							</span>
+							<span id="today-hijri-badge" class="text-xs font-bold text-gray-500 dark:text-gray-400"></span>
+						</div>
+						<h3 id="today-agenda-title" class="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white truncate">
+							Memuat agenda hari ini...
+						</h3>
+						<p id="today-agenda-desc" class="text-xs text-gray-600 dark:text-gray-300 font-normal mt-0.5 line-clamp-2">
+							--
+						</p>
+					</div>
+				</div>
+				<button 
+					id="today-agenda-notif-btn" 
+					type="button" 
+					class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#009788] hover:bg-[#0d8174] text-white text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+				>
+					<span class="material-symbols-rounded text-base">notifications</span>
+					<span>Nyalakan Notifikasi</span>
+				</button>
+			</div>
+
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-8">
+				<div class="space-y-6">
+					<div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 shadow-xs">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="w-10 h-10 bg-[#009788] text-white flex items-center justify-center font-bold shadow-xs">
 								<span class="material-symbols-rounded text-2xl">event</span>
@@ -64,7 +94,7 @@ import Navbar from "../layouts/navbar.astro";
 							</div>
 						</div>
 
-						<div class="mb-6 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5">
+						<div class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 mb-6">
 							<div class="flex items-center justify-between mb-4">
 								<h3 id="cal-month-year-title" class="text-sm font-bold text-gray-900 dark:text-white">
 									Agustus 2026
@@ -102,38 +132,29 @@ import Navbar from "../layouts/navbar.astro";
 							<div id="cal-days-grid" class="grid grid-cols-7 gap-y-1 gap-x-1 text-center text-xs">
 							</div>
 						</div>
-					</div>
 
-					<div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
-						<div class="text-xs font-bold text-[#009788] uppercase tracking-wider mb-2">Tanggal Hijriah & Peristiwa</div>
-						<div id="hijri-result-title" class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white mb-1">
-							Memuat...
-						</div>
-						<div id="hijri-result-sub" class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">
-							--
-						</div>
-						
-						<div id="islamic-event-badge" class="hidden p-3 rounded-xl bg-[#009788] text-white border border-[#009788] text-left">
-							<div class="flex items-center gap-2 text-xs font-bold text-white">
-								<span class="material-symbols-rounded text-base">verified</span>
-								<span id="event-badge-title">Hari Besar Islam</span>
+						<div class="p-5 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
+							<div class="text-xs font-bold text-[#009788] uppercase tracking-wider mb-2">Tanggal Hijriah & Peristiwa</div>
+							<div id="hijri-result-title" class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white mb-1">
+								Memuat...
 							</div>
-							<p id="event-badge-desc" class="text-xs text-white/90 mt-1 leading-relaxed font-normal">--</p>
-						</div>
-					</div>
-
-					<div class="mt-6 p-5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
-						<h3 class="text-xs font-bold uppercase tracking-wider text-[#009788] flex items-center gap-1.5 mb-3">
-							<span class="material-symbols-rounded text-base">event_note</span>
-							Agenda & Hari Besar Islam
-						</h3>
-						<div id="month-events-list" class="space-y-2 text-xs">
+							<div id="hijri-result-sub" class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">
+								--
+							</div>
+							
+							<div id="islamic-event-badge" class="hidden p-3.5 rounded-xl bg-[#009788] text-white border border-[#009788] text-left">
+								<div class="flex items-center gap-2 text-xs font-bold text-white">
+									<span class="material-symbols-rounded text-base">verified</span>
+									<span id="event-badge-title">Hari Besar Islam</span>
+								</div>
+								<p id="event-badge-desc" class="text-xs text-white/90 mt-1 leading-relaxed font-normal">--</p>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 flex flex-col justify-between shadow-xs">
-					<div>
+				<div>
+					<div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 shadow-xs">
 						<div class="flex items-center justify-between mb-6">
 							<div class="flex items-center gap-3">
 								<div class="w-10 h-10 bg-[#009788] text-white flex items-center justify-center font-bold shadow-xs">
@@ -165,79 +186,96 @@ import Navbar from "../layouts/navbar.astro";
 							<span class="material-symbols-rounded text-lg">my_location</span>
 							Deteksi Otomatis Lokasi GPS Saya
 						</button>
-					</div>
 
-					<div class="p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center flex flex-col items-center">
-						<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5 justify-center">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-4 h-4 fill-[#009788]"><path d="M320 115.3L156.8 176.4L311.5 235.1C317 237.2 323 237.2 328.5 235.1L483.2 176.4L320 115.3zM64 193.3C64 173.3 76.4 155.4 95.1 148.4L303.1 70.4C314 66.3 325.9 66.3 336.8 70.4L544.8 148.4C563.5 155.4 575.9 173.3 575.9 193.3L575.9 229.3L322.7 325.3C320.9 326 318.9 326 317 325.3L63.8 229.3L63.8 193.3zM64 333.3L64 280.6L300.1 370.2C312.9 375.1 327 375.1 339.8 370.2L575.9 280.6L575.9 333.3L447.9 381.9L447.9 433.2L575.9 384.6L575.9 446.8C575.9 466.8 563.5 484.7 544.8 491.7L336.8 569.7C325.9 573.8 314 573.8 303.1 569.7L95.1 491.7C76.4 484.7 64 466.7 64 446.7L64 384.5L192 433.1L192 381.8L64 333.2zM300.1 474.1C312.9 479 327 479 339.8 474.1L399.9 451.3L399.9 400L322.7 429.3C320.9 430 318.9 430 317 429.3L239.8 400L239.8 451.3L299.9 474.1z"/></svg>
-							Derajat Arah Kiblat (Ka'bah)
-						</div>
-						
-						<div class="relative w-48 h-48 my-3 rounded-full border-4 border-[#009788]/20 bg-white dark:bg-gray-800 shadow-inner flex items-center justify-center">
-							<span class="absolute top-2 text-xs font-extrabold text-red-500 tracking-wider">N</span>
-							<span class="absolute bottom-2 text-xs font-bold text-gray-400">S</span>
-							<span class="absolute left-2.5 text-xs font-bold text-gray-400">W</span>
-							<span class="absolute right-2.5 text-xs font-bold text-gray-400">E</span>
-
-							<div class="absolute inset-2 rounded-full border border-dashed border-gray-200 dark:border-gray-700 pointer-events-none"></div>
-
-							<div id="compass-needle" class="w-2 h-40 bg-transparent flex flex-col justify-between items-center transition-transform duration-500" style="transform: rotate(295.15deg);">
-								<div class="w-9 h-9 rounded-none bg-[#009788] shadow-md flex items-center justify-center text-white ring-2 ring-white dark:ring-gray-900 transform -translate-y-2 p-1.5">
-									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white"><path d="M320 115.3L156.8 176.4L311.5 235.1C317 237.2 323 237.2 328.5 235.1L483.2 176.4L320 115.3zM64 193.3C64 173.3 76.4 155.4 95.1 148.4L303.1 70.4C314 66.3 325.9 66.3 336.8 70.4L544.8 148.4C563.5 155.4 575.9 173.3 575.9 193.3L575.9 229.3L322.7 325.3C320.9 326 318.9 326 317 325.3L63.8 229.3L63.8 193.3zM64 333.3L64 280.6L300.1 370.2C312.9 375.1 327 375.1 339.8 370.2L575.9 280.6L575.9 333.3L447.9 381.9L447.9 433.2L575.9 384.6L575.9 446.8C575.9 466.8 563.5 484.7 544.8 491.7L336.8 569.7C325.9 573.8 314 573.8 303.1 569.7L95.1 491.7C76.4 484.7 64 466.7 64 446.7L64 384.5L192 433.1L192 381.8L64 333.2zM300.1 474.1C312.9 479 327 479 339.8 474.1L399.9 451.3L399.9 400L322.7 429.3C320.9 430 318.9 430 317 429.3L239.8 400L239.8 451.3L299.9 474.1z"/></svg>
-								</div>
-								<div class="w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 shadow"></div>
+						<div class="p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center flex flex-col items-center">
+							<div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5 justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-4 h-4 fill-[#009788]"><path d="M320 115.3L156.8 176.4L311.5 235.1C317 237.2 323 237.2 328.5 235.1L483.2 176.4L320 115.3zM64 193.3C64 173.3 76.4 155.4 95.1 148.4L303.1 70.4C314 66.3 325.9 66.3 336.8 70.4L544.8 148.4C563.5 155.4 575.9 173.3 575.9 193.3L575.9 229.3L322.7 325.3C320.9 326 318.9 326 317 325.3L63.8 229.3L63.8 193.3zM64 333.3L64 280.6L300.1 370.2C312.9 375.1 327 375.1 339.8 370.2L575.9 280.6L575.9 333.3L447.9 381.9L447.9 433.2L575.9 384.6L575.9 446.8C575.9 466.8 563.5 484.7 544.8 491.7L336.8 569.7C325.9 573.8 314 573.8 303.1 569.7L95.1 491.7C76.4 484.7 64 466.7 64 446.7L64 384.5L192 433.1L192 381.8L64 333.2zM300.1 474.1C312.9 479 327 479 339.8 474.1L399.9 451.3L399.9 400L322.7 429.3C320.9 430 318.9 430 317 429.3L239.8 400L239.8 451.3L299.9 474.1z"/></svg>
+								Derajat Arah Kiblat (Ka'bah)
 							</div>
-						</div>
+							
+							<div class="relative w-48 h-48 my-3 rounded-full border-4 border-[#009788]/20 bg-white dark:bg-gray-800 shadow-inner flex items-center justify-center">
+								<span class="absolute top-2 text-xs font-extrabold text-red-500 tracking-wider">N</span>
+								<span class="absolute bottom-2 text-xs font-bold text-gray-400">S</span>
+								<span class="absolute left-2.5 text-xs font-bold text-gray-400">W</span>
+								<span class="absolute right-2.5 text-xs font-bold text-gray-400">E</span>
 
-						<div id="qibla-degree" class="text-3xl font-mono font-extrabold text-[#009788] mt-2">
-							295.15°
+								<div class="absolute inset-2 rounded-full border border-dashed border-gray-200 dark:border-gray-700 pointer-events-none"></div>
+
+								<div id="compass-needle" class="w-2 h-40 bg-transparent flex flex-col justify-between items-center transition-transform duration-500" style="transform: rotate(295.15deg);">
+									<div class="w-9 h-9 rounded-none bg-[#009788] shadow-md flex items-center justify-center text-white ring-2 ring-white dark:ring-gray-900 transform -translate-y-2 p-1.5">
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white"><path d="M320 115.3L156.8 176.4L311.5 235.1C317 237.2 323 237.2 328.5 235.1L483.2 176.4L320 115.3zM64 193.3C64 173.3 76.4 155.4 95.1 148.4L303.1 70.4C314 66.3 325.9 66.3 336.8 70.4L544.8 148.4C563.5 155.4 575.9 173.3 575.9 193.3L575.9 229.3L322.7 325.3C320.9 326 318.9 326 317 325.3L63.8 229.3L63.8 193.3zM64 333.3L64 280.6L300.1 370.2C312.9 375.1 327 375.1 339.8 370.2L575.9 280.6L575.9 333.3L447.9 381.9L447.9 433.2L575.9 384.6L575.9 446.8C575.9 466.8 563.5 484.7 544.8 491.7L336.8 569.7C325.9 573.8 314 573.8 303.1 569.7L95.1 491.7C76.4 484.7 64 466.7 64 446.7L64 384.5L192 433.1L192 381.8L64 333.2zM300.1 474.1C312.9 479 327 479 339.8 474.1L399.9 451.3L399.9 400L322.7 429.3C320.9 430 318.9 430 317 429.3L239.8 400L239.8 451.3L299.9 474.1z"/></svg>
+									</div>
+									<div class="w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 shadow"></div>
+								</div>
+							</div>
+
+							<div id="qibla-degree" class="text-3xl font-mono font-extrabold text-[#009788] mt-2">
+								295.15°
+							</div>
+							<p id="qibla-distance-text" class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-semibold">
+								Jarak ke Ka'bah (Mekkah): ~7,914 KM
+							</p>
 						</div>
-						<p id="qibla-distance-text" class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-semibold">
-							Jarak ke Ka'bah (Mekkah): ~7,914 KM
-						</p>
 					</div>
 				</div>
+			</div>
 
+			<div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 shadow-xs">
+				<div class="flex items-center justify-between gap-4 mb-6">
+					<div class="flex items-center gap-3">
+						<div class="w-10 h-10 bg-[#009788] text-white flex items-center justify-center font-bold shadow-xs">
+							<span class="material-symbols-rounded text-2xl">event_note</span>
+						</div>
+						<div>
+							<h3 class="text-base font-bold text-gray-900 dark:text-white">Agenda & Hari Besar Islam</h3>
+							<p id="events-month-subtitle" class="text-xs text-gray-500 dark:text-gray-400">Daftar amalan sunnah & peristiwa bersejarah di bulan terpilih</p>
+						</div>
+					</div>
+				</div>
+				<div id="month-events-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+				</div>
 			</div>
 		</main>
+
+		<div id="toast-notif" class="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 translate-y-full opacity-0 z-[9999] transition-all duration-300 ease-out pointer-events-none">
+			<div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-[#009788] text-white text-sm font-semibold shadow-lg shadow-[#009788]/25">
+				<span class="material-symbols-rounded text-lg">info</span>
+				<span id="toast-message"></span>
+			</div>
+		</div>
 
 		<script>
 			const HIJRI_MONTH_NAMES = [
 				'Muharram', 'Safar', 'Rabiul Awal', 'Rabiul Akhir',
-				'Jumadil Awal', 'Jumadil Akhir', 'Rajab', "Sya'ban",
-				'Ramadhan', 'Syawal', "Dzulqa'dah", 'Dzulhijjah'
+				'Jumadil Awal', 'Jumadil Akhir', 'Rajab', 'Sya\'ban',
+				'Ramadhan', 'Syawal', 'Zulqa\'dah', 'Zulhijjah'
 			];
 
 			const FIXED_ISLAMIC_EVENTS: Record<string, { title: string; desc: string; type: 'holiday' | 'sunnah' | 'special' }> = {
-				'1-1': { title: "Tahun Baru Islam (1 Muharram)", desc: "Awal Tahun Baru Hijriah, momentum hijrah Rasulullah SAW.", type: "holiday" },
-				'1-9': { title: "Puasa Sunnah Tasu'a (9 Muharram)", desc: "Puasa sunnah dianjurkan sehari sebelum hari Asyura.", type: "sunnah" },
-				'1-10': { title: "Hari Asyura & Puasa Asyura (10 Muharram)", desc: "Puasa sunnah Asyura yang menghapuskan dosa setahun lalu.", type: "sunnah" },
-				'3-12': { title: "Maulid Nabi Muhammad SAW (12 Rabiul Awal)", desc: "Peringatan hari kelahiran baginda Rasulullah SAW.", type: "holiday" },
+				'1-1': { title: "Tahun Baru Hijriah (1 Muharram)", desc: "Awal Tahun Baru Islam, peristiwa agung hijrah Rasulullah SAW.", type: "holiday" },
+				'1-9': { title: "Puasa Sunnah Tasu'a (9 Muharram)", desc: "Puasa sunnah dianjurkan mendampingi hari Asyura.", type: "sunnah" },
+				'1-10': { title: "Hari Asyura & Puasa Asyura (10 Muharram)", desc: "Hari bersejarah para nabi & puasa sunnah penghapus dosa setahun yang lalu.", type: "holiday" },
+				'3-12': { title: "Maulid Nabi Muhammad SAW (12 Rabiul Awal)", desc: "Peringatan hari kelahiran suri teladan umat manusia, Rasulullah SAW.", type: "holiday" },
 				'7-27': { title: "Isra Mi'raj Nabi Muhammad SAW (27 Rajab)", desc: "Perjalanan agung Rasulullah SAW menerima perintah shalat 5 waktu.", type: "holiday" },
-				'8-15': { title: "Malam Nisfu Sya'ban (15 Sya'ban)", desc: "Malam keutamaan doa dan pengampunan dosa tahunan.", type: "special" },
-				'9-1': { title: "Awal Puasa Ramadhan (1 Ramadhan)", desc: "Hari pertama ibadah puasa wajib di bulan suci Ramadhan.", type: "holiday" },
-				'9-17': { title: "Nuzulul Qur'an (17 Ramadhan)", desc: "Peringatan malam diturunkannya permulaan ayat suci Al-Qur'an.", type: "special" },
-				'9-21': { title: "Malam Lailatul Qadar (21 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan yang lebih baik dari 1000 bulan.", type: "special" },
-				'9-23': { title: "Malam Lailatul Qadar (23 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan.", type: "special" },
-				'9-25': { title: "Malam Lailatul Qadar (25 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan.", type: "special" },
-				'9-27': { title: "Malam Lailatul Qadar (27 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan yang sangat diharapkan.", type: "special" },
-				'9-29': { title: "Malam Lailatul Qadar (29 Ramadhan)", desc: "Malam ganjil penutup bulan suci Ramadhan.", type: "special" },
-				'10-1': { title: "Hari Raya Idul Fitri 1 Syawal", desc: "Hari Raya Kemenangan umat Islam (Diharamkan berpuasa).", type: "holiday" },
-				'10-2': { title: "Hari Raya Idul Fitri Hari Ke-2 (2 Syawal)", desc: "Hari kedua perayaan Idul Fitri.", type: "holiday" },
-				'12-8': { title: "Hari Tarwiyah & Puasa Tarwiyah (8 Dzulhijjah)", desc: "Hari persiapan jamaah haji menuju Mina dan puasa sunnah Tarwiyah.", type: "sunnah" },
-				'12-9': { title: "Hari Arafah & Puasa Arafah (9 Dzulhijjah)", desc: "Wukuf jamaah haji di Arafah & puasa sunnah penghapus dosa 2 tahun.", type: "sunnah" },
-				'12-10': { title: "Hari Raya Idul Adha (10 Dzulhijjah)", desc: "Hari Raya Kurban & ibadah penyembelihan kurban (Diharamkan puasa).", type: "holiday" },
-				'12-11': { title: "Hari Tasyrik Ke-1 (11 Dzulhijjah)", desc: "Hari makan, minum, dan dzikir (Diharamkan berpuasa).", type: "special" },
-				'12-12': { title: "Hari Tasyrik Ke-2 (12 Dzulhijjah)", desc: "Hari Tasyrik ke-2 (Diharamkan berpuasa).", type: "special" },
-				'12-13': { title: "Hari Tasyrik Ke-3 (13 Dzulhijjah)", desc: "Hari Tasyrik ke-3 (Diharamkan berpuasa).", type: "special" },
+				'8-15': { title: "Malam Nisfu Sya'ban (15 Sya'ban)", desc: "Malam keutamaan doa dan pengampunan dosa.", type: "special" },
+				'9-1': { title: "Awal Puasa Ramadhan (1 Ramadhan)", desc: "Hari pertama ibadah puasa wajib bulan suci Ramadhan.", type: "holiday" },
+				'9-17': { title: "Nuzulul Qur'an (17 Ramadhan)", desc: "Peringatan malam pertama kali ayat suci Al-Qur'an diturunkan.", type: "special" },
+				'9-21': { title: "Malam Lailatul Qadar (10 Malam Terakhir)", desc: "Malam kemuliaan yang lebih baik daripada 1.000 bulan.", type: "special" },
+				'10-1': { title: "Hari Raya Idul Fitri (1 Syawal)", desc: "Hari kemenangan umat Islam setelah sebulan penuh berpuasa.", type: "holiday" },
+				'10-2': { title: "Hari Raya Idul Fitri Hari Ke-2 (2 Syawal)", desc: "Hari kedua perayaan kemenangan Idul Fitri.", type: "holiday" },
+				'12-9': { title: "Hari Arafah & Puasa Arafah (9 Zulhijjah)", desc: "Puasa sunnah bagi yang tidak berhaji, menghapus dosa 2 tahun.", type: "sunnah" },
+				'12-10': { title: "Hari Raya Idul Adha (10 Zulhijjah)", desc: "Hari Raya Kurban & ibadah penyembelihan hewan kurban.", type: "holiday" },
+				'12-11': { title: "Hari Tasyrik Ke-1 (11 Zulhijjah)", desc: "Hari makan minum dan berzikir, diharamkan berpuasa.", type: "special" },
+				'12-12': { title: "Hari Tasyrik Ke-2 (12 Zulhijjah)", desc: "Hari Tasyrik ke-2, diharamkan berpuasa.", type: "special" },
+				'12-13': { title: "Hari Tasyrik Ke-3 (13 Zulhijjah)", desc: "Hari Tasyrik ke-3, diharamkan berpuasa.", type: "special" },
 			};
 
 			function getHijriInfo(dateObj: Date): { month: number; day: number; year: number; key: string } {
 				try {
 					const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic-civil', {
-						year: 'numeric',
 						month: 'numeric',
-						day: 'numeric'
+						day: 'numeric',
+						year: 'numeric'
 					});
 					const parts = formatter.formatToParts(dateObj);
 					const month = parseInt(parts.find(p => p.type === 'month')?.value || '1', 10);
@@ -318,6 +356,12 @@ import Navbar from "../layouts/navbar.astro";
 			const eventBadgeTitle = document.getElementById('event-badge-title');
 			const eventBadgeDesc = document.getElementById('event-badge-desc');
 			const monthEventsList = document.getElementById('month-events-list');
+			const eventsMonthSubtitle = document.getElementById('events-month-subtitle');
+
+			const todayAgendaTitle = document.getElementById('today-agenda-title');
+			const todayAgendaDesc = document.getElementById('today-agenda-desc');
+			const todayHijriBadge = document.getElementById('today-hijri-badge');
+			const todayAgendaNotifBtn = document.getElementById('today-agenda-notif-btn');
 
 			let viewYear = new Date().getFullYear();
 			let viewMonth = new Date().getMonth();
@@ -327,6 +371,48 @@ import Navbar from "../layouts/navbar.astro";
 				'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
 				'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
 			];
+
+			function initTodayAgenda() {
+				const today = new Date();
+				const todayHijri = getHijriInfo(today);
+				const todayEvent = getEventForDate(today);
+
+				if (todayHijriBadge) {
+					todayHijriBadge.textContent = `${todayHijri.day} ${HIJRI_MONTH_NAMES[todayHijri.month - 1]} ${todayHijri.year} H`;
+				}
+
+				if (todayEvent) {
+					if (todayAgendaTitle) todayAgendaTitle.textContent = todayEvent.title;
+					if (todayAgendaDesc) todayAgendaDesc.textContent = todayEvent.desc;
+				} else {
+					if (todayAgendaTitle) todayAgendaTitle.textContent = "Tidak ada agenda puasa / peringatan khusus hari ini";
+					if (todayAgendaDesc) todayAgendaDesc.textContent = "Mari perbanyak dzikir, membaca Al-Qur'an, dan shalat berjamaah tepat waktu.";
+				}
+			}
+
+			todayAgendaNotifBtn?.addEventListener('click', async () => {
+				if (!('Notification' in window)) {
+					showToast('Browser Anda tidak mendukung notifikasi.');
+					return;
+				}
+
+				const permission = await Notification.requestPermission();
+				if (permission === 'granted') {
+					const today = new Date();
+					const todayEvent = getEventForDate(today);
+					const todayHijri = getHijriInfo(today);
+					const title = todayEvent ? `Agenda Hari Ini: ${todayEvent.title}` : `Pengingat Hari Ini (${todayHijri.day} ${HIJRI_MONTH_NAMES[todayHijri.month - 1]})`;
+					const body = todayEvent ? todayEvent.desc : "Semoga hari ini penuh berkah dan kemudahan dalam beribadah.";
+
+					new Notification(title, {
+						body: body,
+						icon: '/favicon.svg'
+					});
+					showToast('Notifikasi pengingat agenda berhasil diaktifkan!');
+				} else {
+					showToast('Izin notifikasi belum diberikan di browser.');
+				}
+			});
 
 			function updateHijriDisplay(dateObj: Date) {
 				try {
@@ -361,6 +447,9 @@ import Navbar from "../layouts/navbar.astro";
 				if (!daysGrid || !titleEl) return;
 
 				titleEl.textContent = `${monthNamesIndo[month]} ${year}`;
+				if (eventsMonthSubtitle) {
+					eventsMonthSubtitle.textContent = `Daftar amalan sunnah & agenda di bulan ${monthNamesIndo[month]} ${year}`;
+				}
 
 				const firstDayIndex = new Date(year, month, 1).getDay();
 				const totalDays = new Date(year, month + 1, 0).getDate();
@@ -370,7 +459,7 @@ import Navbar from "../layouts/navbar.astro";
 
 				for (let i = firstDayIndex - 1; i >= 0; i--) {
 					const prevDay = prevMonthTotalDays - i;
-					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none text-center">${prevDay}</div>`;
+					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none">${prevDay}</div>`;
 				}
 
 				const today = new Date();
@@ -396,33 +485,22 @@ import Navbar from "../layouts/navbar.astro";
 					}
 
 					let bgClass = 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200';
-					let dotClass = 'bg-[#009788]';
-
 					if (isSelected) {
 						bgClass = 'bg-[#009788] text-white font-bold shadow-xs';
-						dotClass = 'bg-white';
 					} else if (isToday) {
 						bgClass = 'border-2 border-[#009788] text-[#009788] font-bold';
-						dotClass = 'bg-[#009788]';
 					} else if (hasEvent) {
-						if (evt.type === 'holiday') {
-							bgClass = 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 font-semibold';
-							dotClass = 'bg-amber-500';
-						} else {
-							bgClass = 'bg-emerald-50 dark:bg-emerald-950/40 text-[#009788] font-semibold';
-							dotClass = 'bg-[#009788]';
-						}
+						bgClass = 'bg-emerald-50 dark:bg-emerald-950/40 text-[#009788] font-semibold';
 					}
 
 					html += `
 						<button 
 							type="button" 
 							data-day="${day}" 
-							class="cal-day-cell p-1.5 sm:p-2 rounded-xl text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer min-h-[42px] sm:min-h-[46px] ${bgClass}"
-							title="${hasEvent ? evt.title : ''}"
+							class="cal-day-cell p-2 rounded-xl text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${bgClass}"
 						>
-							<span class="leading-none mb-1">${day}</span>
-							${hasEvent ? `<span class="w-1.5 h-1.5 rounded-full ${dotClass} shadow-xs"></span>` : '<span class="w-1.5 h-1.5 opacity-0"></span>'}
+							<span>${day}</span>
+							${hasEvent ? '<span class="w-1.5 h-1.5 rounded-full bg-[#009788] -mb-1 mt-0.5"></span>' : ''}
 						</button>
 					`;
 				}
@@ -430,29 +508,35 @@ import Navbar from "../layouts/navbar.astro";
 				const totalRenderedCells = firstDayIndex + totalDays;
 				const remainingCells = (7 - (totalRenderedCells % 7)) % 7;
 				for (let i = 1; i <= remainingCells; i++) {
-					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none text-center">${i}</div>`;
+					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none">${i}</div>`;
 				}
 
 				daysGrid.innerHTML = html;
 
 				if (monthEventsList) {
 					if (foundEventsInMonth.length > 0) {
-						monthEventsList.innerHTML = foundEventsInMonth.map(ev => `
-							<div class="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#009788]/50 transition-all">
-								<div class="font-bold text-gray-900 dark:text-white flex items-center justify-between">
-									<span class="flex items-center gap-1.5">
-										<span class="w-2 h-2 rounded-full ${ev.type === 'holiday' ? 'bg-amber-500' : 'bg-[#009788]'}"></span>
-										${ev.title}
-									</span>
-									<span class="text-[10px] text-[#009788] font-mono font-semibold">${ev.dateStr}</span>
+						monthEventsList.innerHTML = foundEventsInMonth.map(ev => {
+							let badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40';
+							if (ev.type === 'holiday') {
+								badgeColor = 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40';
+							}
+							return `
+								<div class="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex flex-col justify-between">
+									<div class="flex items-start justify-between gap-2 mb-1.5">
+										<h4 class="font-bold text-gray-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5">
+											<span class="w-2 h-2 rounded-full bg-[#009788] shrink-0"></span>
+											<span>${ev.title}</span>
+										</h4>
+										<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border shrink-0 ${badgeColor}">${ev.dateStr}</span>
+									</div>
+									<p class="text-gray-500 dark:text-gray-400 text-[11px] leading-relaxed">${ev.desc}</p>
 								</div>
-								<p class="text-gray-500 dark:text-gray-400 text-[11px] mt-1 leading-relaxed">${ev.desc}</p>
-							</div>
-						`).join('');
+							`;
+						}).join('');
 					} else {
 						monthEventsList.innerHTML = `
-							<div class="p-3 text-center text-gray-400">
-								Tidak ada hari besar atau agenda ibadah di bulan ini.
+							<div class="col-span-full p-8 text-center text-gray-400 text-xs">
+								Tidak ada agenda besar tercatat pada bulan ini.
 							</div>
 						`;
 					}
@@ -487,6 +571,7 @@ import Navbar from "../layouts/navbar.astro";
 				renderCalendar(viewYear, viewMonth);
 			});
 
+			initTodayAgenda();
 			updateHijriDisplay(selectedDate);
 			renderCalendar(viewYear, viewMonth);
 
@@ -560,6 +645,7 @@ import Navbar from "../layouts/navbar.astro";
 							updateQibla();
 							btnGps.innerHTML = `<span class="material-symbols-rounded text-lg">my_location</span> Deteksi Otomatis Lokasi GPS Saya`;
 							if (sensorBadge) sensorBadge.textContent = "GPS Terkoneksi";
+							showToast("Lokasi GPS berhasil diperbarui!");
 						},
 						(err) => {
 							showToast("Gagal mengakses GPS: " + err.message);
@@ -600,12 +686,5 @@ import Navbar from "../layouts/navbar.astro";
 
 			updateQibla();
 		</script>
-
-		<div id="toast-notif" class="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 translate-y-full opacity-0 z-[9999] transition-all duration-300 ease-out pointer-events-none">
-			<div class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-[#009788] text-white text-sm font-semibold shadow-lg shadow-[#009788]/25">
-				<span class="material-symbols-rounded text-lg">info</span>
-				<span id="toast-message"></span>
-			</div>
-		</div>
 	</body>
 </html>
