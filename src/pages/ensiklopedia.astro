@@ -65,45 +65,37 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
   <body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
     <Navbar />
     
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 md:pb-16">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 md:pb-12">
       
-      <section class="relative overflow-hidden rounded-3xl bg-[#009788] text-white p-6 sm:p-8 mb-6 shadow-xs">
-        <div class="relative z-10 max-w-3xl">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider mb-3">
-            <span class="material-symbols-rounded text-sm">auto_stories</span>
-            Pustaka & Panduan Ibadah
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
-            Ensiklopedia Islam
-          </h1>
-          <p class="text-xs sm:text-sm text-white/90 font-normal leading-relaxed mb-5">
-            Pencarian global terpadu untuk niat ibadah, kumpulan doa harian shahih, hadis tematik nabi, dan kitab hadis mu'tabar.
-          </p>
-
-          <div class="relative max-w-xl">
-            <input 
-              type="text" 
-              id="ensiklopedia-search-input"
-              placeholder="Cari niat shalat, doa tidur/makan, hadits puasa, sedekah..."
-              class="w-full pl-11 pr-10 py-3 rounded-2xl bg-white text-gray-800 placeholder-gray-400 text-sm font-medium shadow-xs focus:outline-none focus:ring-4 focus:ring-emerald-300 transition-all"
-            />
-            <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">
-              search
-            </span>
-            <button 
-              id="clear-search-btn" 
-              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer p-1"
-              title="Hapus pencarian"
-            >
-              <span class="material-symbols-rounded text-lg">close</span>
-            </button>
-          </div>
+      <div class="rounded-2xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-8 shadow-xs">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#009788] text-white text-xs font-bold uppercase tracking-wider mb-3">
+          <span class="material-symbols-rounded text-sm">auto_stories</span>
+          Pustaka & Panduan Ibadah
         </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111827] dark:text-white mb-2">
+          Ensiklopedia Islam
+        </h1>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-normal leading-relaxed mb-6 max-w-2xl">
+          Pencarian global terpadu untuk niat ibadah, kumpulan doa harian shahih, hadis tematik nabi, dan kitab hadis mu'tabar.
+        </p>
 
-        <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none text-white select-none">
-          <span class="material-symbols-rounded text-[180px]">menu_book</span>
+        <div class="relative max-w-xl">
+          <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-xl text-[#009788] pointer-events-none">search</span>
+          <input 
+            type="text" 
+            id="ensiklopedia-search-input"
+            placeholder="Cari niat shalat, doa tidur/makan, hadits puasa, sedekah..."
+            class="w-full bg-[#f8fafc] dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-11 pr-10 py-3 text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-400 outline-none focus:border-[#009788] transition-colors"
+          />
+          <button 
+            id="clear-search-btn" 
+            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer p-1"
+            title="Hapus pencarian"
+          >
+            <span class="material-symbols-rounded text-lg">close</span>
+          </button>
         </div>
-      </section>
+      </div>
 
       <section class="mb-4 sticky top-16 md:top-20 z-30 bg-[#f8fafc]/95 dark:bg-[#111827]/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6">
         <div class="grid grid-cols-5 gap-1.5 sm:gap-2 w-full select-none" id="category-tabs-container">
