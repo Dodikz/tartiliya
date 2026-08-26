@@ -186,7 +186,7 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               {item.title}
             </h3>
 
-            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 mb-4 border border-gray-200 dark:border-gray-800">
+            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-800">
               <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
                 {item.arab}
               </p>
@@ -196,14 +196,12 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                 "{item.translation}"
               </p>
+              {item.explanation && (
+                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <span class="font-bold text-[#009788]">Keterangan:</span> {item.explanation}
+                </div>
+              )}
             </div>
-
-            {item.explanation && (
-              <div class="flex items-start gap-2.5 text-xs text-gray-600 dark:text-gray-300 bg-[#f8fafc] dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-3.5 rounded-xl">
-                <span class="material-symbols-rounded text-base text-[#009788] shrink-0 mt-0.5">info</span>
-                <span class="leading-relaxed">{item.explanation}</span>
-              </div>
-            )}
           </article>
         ))}
       </div>
@@ -352,7 +350,7 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               ${item.title}
             </h3>
 
-            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 mb-4 border border-gray-200 dark:border-gray-800">
+            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-800">
               <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
                 ${item.arab}
               </p>
@@ -362,14 +360,12 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                 "${item.translation}"
               </p>
+              ${item.explanation ? `
+                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <span class="font-bold text-[#009788]">Keterangan:</span> ${item.explanation}
+                </div>
+              ` : ''}
             </div>
-
-            ${item.explanation ? `
-              <div class="flex items-start gap-2.5 text-xs text-gray-600 dark:text-gray-300 bg-[#f8fafc] dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-3.5 rounded-xl">
-                <span class="material-symbols-rounded text-base text-[#009788] shrink-0 mt-0.5">info</span>
-                <span class="leading-relaxed">${item.explanation}</span>
-              </div>
-            ` : ''}
           </article>
         `;
       }
@@ -400,7 +396,7 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               ${item.nama}
             </h3>
 
-            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 mb-4 border border-gray-200 dark:border-gray-800">
+            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-800">
               <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
                 ${item.ar}
               </p>
@@ -410,14 +406,12 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                 "${item.idn}"
               </p>
+              ${item.tentang ? `
+                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <span class="font-bold text-[#009788]">Sumber / Takhrij:</span> ${item.tentang}
+                </div>
+              ` : ''}
             </div>
-
-            ${item.tentang ? `
-              <div class="flex items-start gap-2.5 text-xs text-gray-600 dark:text-gray-300 bg-[#f8fafc] dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-3.5 rounded-xl">
-                <span class="material-symbols-rounded text-base text-[#009788] shrink-0 mt-0.5">menu_book</span>
-                <span class="leading-relaxed"><strong>Takhrij:</strong> ${item.tentang}</span>
-              </div>
-            ` : ''}
           </article>
         `;
       }
@@ -450,24 +444,19 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
               ${item.title}
             </h3>
 
-            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 mb-4 border border-gray-200 dark:border-gray-800">
+            <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-800">
               <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
                 ${item.arab}
               </p>
               <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                 "${item.translation}"
               </p>
-            </div>
-
-            ${item.lesson ? `
-              <div class="flex items-start gap-2.5 text-xs text-gray-600 dark:text-gray-300 bg-[#f8fafc] dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-3.5 rounded-xl">
-                <span class="material-symbols-rounded text-base text-[#009788] shrink-0 mt-0.5">lightbulb</span>
-                <div class="leading-relaxed">
-                  <strong class="text-[#009788] dark:text-[#2dd4bf] block mb-0.5">Hikmah & Faedah:</strong>
-                  <span>${item.lesson}</span>
+              ${item.lesson ? `
+                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <span class="font-bold text-[#009788]">Hikmah & Faedah:</span> ${item.lesson}
                 </div>
-              </div>
-            ` : ''}
+              ` : ''}
+            </div>
           </article>
         `;
       }
@@ -793,7 +782,7 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
                     ${title}
                   </h3>
 
-                  <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 mb-4 border border-gray-200 dark:border-gray-800">
+                  <div class="bg-[#f8fafc] dark:bg-[#111827] rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-800">
                     ${arabText ? `
                       <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
                         ${arabText}
@@ -802,24 +791,17 @@ const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
                     <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                       "${indoText}"
                     </p>
-                  </div>
-
-                  ${takhrij ? `
-                    <div class="flex items-start gap-2.5 text-xs text-gray-600 dark:text-gray-300 bg-[#f8fafc] dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-3.5 rounded-xl mb-2">
-                      <span class="material-symbols-rounded text-base text-[#009788] shrink-0 mt-0.5">menu_book</span>
-                      <span class="leading-relaxed"><strong>Takhrij:</strong> ${takhrij}</span>
-                    </div>
-                  ` : ''}
-
-                  ${hikmah ? `
-                    <div class="flex items-start gap-2.5 text-xs text-gray-600 dark:text-gray-300 bg-[#f8fafc] dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-3.5 rounded-xl">
-                      <span class="material-symbols-rounded text-base text-[#009788] shrink-0 mt-0.5">lightbulb</span>
-                      <div class="leading-relaxed">
-                        <strong class="text-[#009788] dark:text-[#2dd4bf] block mb-0.5">Hikmah & Pelajaran:</strong>
-                        <span class="whitespace-pre-line">${hikmah}</span>
+                    ${takhrij ? `
+                      <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <span class="font-bold text-[#009788]">Takhrij:</span> ${takhrij}
                       </div>
-                    </div>
-                  ` : ''}
+                    ` : ''}
+                    ${hikmah ? `
+                      <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <span class="font-bold text-[#009788]">Hikmah & Pelajaran:</span> <span class="whitespace-pre-line">${hikmah}</span>
+                      </div>
+                    ` : ''}
+                  </div>
                 </article>
               `;
             }).join('');
