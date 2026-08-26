@@ -84,16 +84,33 @@ body {
 
 html:not(.fonts-loaded) .material-symbols-rounded {
   color: transparent !important;
+  background: linear-gradient(90deg, rgba(156, 163, 175, 0.15) 25%, rgba(156, 163, 175, 0.35) 50%, rgba(156, 163, 175, 0.15) 75%) !important;
+  background-size: 200% 100% !important;
+  animation: skeletonPulse 1.2s infinite ease-in-out !important;
+  border-radius: 4px !important;
+  width: 1em !important;
+  height: 1em !important;
+  max-width: 1em !important;
+  max-height: 1em !important;
+  min-width: 1em !important;
+  min-height: 1em !important;
+  user-select: none !important;
+  overflow: hidden !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  pointer-events: none !important;
+}
+
+.skeleton-box {
   background: linear-gradient(90deg, rgba(156, 163, 175, 0.15) 25%, rgba(156, 163, 175, 0.35) 50%, rgba(156, 163, 175, 0.15) 75%);
   background-size: 200% 100%;
   animation: skeletonPulse 1.2s infinite ease-in-out;
-  border-radius: 4px;
-  min-width: 1em;
-  min-height: 1em;
-  user-select: none;
-  overflow: hidden;
-  display: inline-block;
-  vertical-align: middle;
+  border-radius: 0.5rem;
+}
+
+.dark .skeleton-box {
+  background: linear-gradient(90deg, rgba(55, 65, 81, 0.4) 25%, rgba(75, 85, 99, 0.6) 50%, rgba(55, 65, 81, 0.4) 75%);
+  background-size: 200% 100%;
 }
 
 @keyframes skeletonPulse {
