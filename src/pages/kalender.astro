@@ -190,38 +190,112 @@ import Navbar from "../layouts/navbar.astro";
 		</main>
 
 		<script>
-			const ISLAMIC_EVENTS: Record<string, { title: string; desc: string; type: string }> = {
-				'1-1': { title: "Tahun Baru Hijriah (1 Muharram)", desc: "Awal Tahun Baru Islam, peristiwa hijrah Nabi Muhammad SAW.", type: "holiday" },
-				'1-9': { title: "Puasa Sunnah Tasu'a (9 Muharram)", desc: "Puasa sunnah dianjurkan sebelum hari Asyura.", type: "sunnah" },
-				'1-10': { title: "Hari Asyura & Puasa Asyura (10 Muharram)", desc: "Hari bersejarah para nabi & kesunnahan puasa penghapus dosa setahun.", type: "sunnah" },
-				'3-12': { title: "Maulid Nabi Muhammad SAW (12 Rabiul Awal)", desc: "Peringatan hari kelahiran Rasulullah SAW.", type: "holiday" },
+			const HIJRI_MONTH_NAMES = [
+				'Muharram', 'Safar', 'Rabiul Awal', 'Rabiul Akhir',
+				'Jumadil Awal', 'Jumadil Akhir', 'Rajab', "Sya'ban",
+				'Ramadhan', 'Syawal', "Dzulqa'dah", 'Dzulhijjah'
+			];
+
+			const FIXED_ISLAMIC_EVENTS: Record<string, { title: string; desc: string; type: 'holiday' | 'sunnah' | 'special' }> = {
+				'1-1': { title: "Tahun Baru Islam (1 Muharram)", desc: "Awal Tahun Baru Hijriah, momentum hijrah Rasulullah SAW.", type: "holiday" },
+				'1-9': { title: "Puasa Sunnah Tasu'a (9 Muharram)", desc: "Puasa sunnah dianjurkan sehari sebelum hari Asyura.", type: "sunnah" },
+				'1-10': { title: "Hari Asyura & Puasa Asyura (10 Muharram)", desc: "Puasa sunnah Asyura yang menghapuskan dosa setahun lalu.", type: "sunnah" },
+				'3-12': { title: "Maulid Nabi Muhammad SAW (12 Rabiul Awal)", desc: "Peringatan hari kelahiran baginda Rasulullah SAW.", type: "holiday" },
 				'7-27': { title: "Isra Mi'raj Nabi Muhammad SAW (27 Rajab)", desc: "Perjalanan agung Rasulullah SAW menerima perintah shalat 5 waktu.", type: "holiday" },
-				'8-15': { title: "Malam Nisfu Sya'ban (15 Sya'ban)", desc: "Malam keutamaan doa dan pengampunan dosa.", type: "special" },
-				'9-1': { title: "Awal Puasa Ramadhan (1 Ramadhan)", desc: "Hari pertama ibadah puasa wajib bulan suci Ramadhan.", type: "holiday" },
-				'9-17': { title: "Nuzulul Qur'an (17 Ramadhan)", desc: "Peringatan malam pertama kali Al-Qur'an diturunkan.", type: "special" },
-				'9-21': { title: "Malam Lailatul Qadar (Sepuluh Hari Terakhir Ramadhan)", desc: "Malam yang lebih baik dari 1.000 bulan.", type: "special" },
-				'10-1': { title: "Hari Raya Idul Fitri 1 Syawal", desc: "Hari kemenangan umat Islam setelah satu bulan berpuasa.", type: "holiday" },
+				'8-15': { title: "Malam Nisfu Sya'ban (15 Sya'ban)", desc: "Malam keutamaan doa dan pengampunan dosa tahunan.", type: "special" },
+				'9-1': { title: "Awal Puasa Ramadhan (1 Ramadhan)", desc: "Hari pertama ibadah puasa wajib di bulan suci Ramadhan.", type: "holiday" },
+				'9-17': { title: "Nuzulul Qur'an (17 Ramadhan)", desc: "Peringatan malam diturunkannya permulaan ayat suci Al-Qur'an.", type: "special" },
+				'9-21': { title: "Malam Lailatul Qadar (21 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan yang lebih baik dari 1000 bulan.", type: "special" },
+				'9-23': { title: "Malam Lailatul Qadar (23 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan.", type: "special" },
+				'9-25': { title: "Malam Lailatul Qadar (25 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan.", type: "special" },
+				'9-27': { title: "Malam Lailatul Qadar (27 Ramadhan)", desc: "Malam ganjil sepuluh malam terakhir Ramadhan yang sangat diharapkan.", type: "special" },
+				'9-29': { title: "Malam Lailatul Qadar (29 Ramadhan)", desc: "Malam ganjil penutup bulan suci Ramadhan.", type: "special" },
+				'10-1': { title: "Hari Raya Idul Fitri 1 Syawal", desc: "Hari Raya Kemenangan umat Islam (Diharamkan berpuasa).", type: "holiday" },
 				'10-2': { title: "Hari Raya Idul Fitri Hari Ke-2 (2 Syawal)", desc: "Hari kedua perayaan Idul Fitri.", type: "holiday" },
-				'12-9': { title: "Hari Arafah & Puasa Arafah (9 Zulhijjah)", desc: "Puasa sunnah bagi yang tidak menunaikan haji, penghapus dosa 2 tahun.", type: "sunnah" },
-				'12-10': { title: "Hari Raya Idul Adha (10 Zulhijjah)", desc: "Hari Raya Kurban & ibadah penyembelihan hewan kurban.", type: "holiday" },
-				'12-11': { title: "Hari Tasyrik Ke-1 (11 Zulhijjah)", desc: "Hari makan minum dan berzikir, diharamkan berpuasa.", type: "special" },
-				'12-12': { title: "Hari Tasyrik Ke-2 (12 Zulhijjah)", desc: "Hari Tasyrik ke-2.", type: "special" },
-				'12-13': { title: "Hari Tasyrik Ke-3 (13 Zulhijjah)", desc: "Hari Tasyrik ke-3.", type: "special" },
+				'12-8': { title: "Hari Tarwiyah & Puasa Tarwiyah (8 Dzulhijjah)", desc: "Hari persiapan jamaah haji menuju Mina dan puasa sunnah Tarwiyah.", type: "sunnah" },
+				'12-9': { title: "Hari Arafah & Puasa Arafah (9 Dzulhijjah)", desc: "Wukuf jamaah haji di Arafah & puasa sunnah penghapus dosa 2 tahun.", type: "sunnah" },
+				'12-10': { title: "Hari Raya Idul Adha (10 Dzulhijjah)", desc: "Hari Raya Kurban & ibadah penyembelihan kurban (Diharamkan puasa).", type: "holiday" },
+				'12-11': { title: "Hari Tasyrik Ke-1 (11 Dzulhijjah)", desc: "Hari makan, minum, dan dzikir (Diharamkan berpuasa).", type: "special" },
+				'12-12': { title: "Hari Tasyrik Ke-2 (12 Dzulhijjah)", desc: "Hari Tasyrik ke-2 (Diharamkan berpuasa).", type: "special" },
+				'12-13': { title: "Hari Tasyrik Ke-3 (13 Dzulhijjah)", desc: "Hari Tasyrik ke-3 (Diharamkan berpuasa).", type: "special" },
 			};
 
-			function getHijriInfo(dateObj: Date): { month: number; day: number; key: string } {
+			function getHijriInfo(dateObj: Date): { month: number; day: number; year: number; key: string } {
 				try {
 					const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic-civil', {
+						year: 'numeric',
 						month: 'numeric',
 						day: 'numeric'
 					});
 					const parts = formatter.formatToParts(dateObj);
 					const month = parseInt(parts.find(p => p.type === 'month')?.value || '1', 10);
 					const day = parseInt(parts.find(p => p.type === 'day')?.value || '1', 10);
-					return { month, day, key: `${month}-${day}` };
+					const year = parseInt(parts.find(p => p.type === 'year')?.value || '1448', 10);
+					return { month, day, year, key: `${month}-${day}` };
 				} catch (_) {
-					return { month: 1, day: 1, key: '1-1' };
+					return { month: 1, day: 1, year: 1448, key: '1-1' };
 				}
+			}
+
+			function getEventForDate(dateObj: Date): { title: string; desc: string; type: 'holiday' | 'sunnah' | 'special' } | null {
+				const hInfo = getHijriInfo(dateObj);
+				const dayOfWeek = dateObj.getDay();
+
+				if (FIXED_ISLAMIC_EVENTS[hInfo.key]) {
+					return FIXED_ISLAMIC_EVENTS[hInfo.key];
+				}
+
+				if ((hInfo.day === 13 || hInfo.day === 14 || hInfo.day === 15) && hInfo.month !== 9 && !(hInfo.month === 12 && hInfo.day === 13)) {
+					return {
+						title: `Puasa Sunnah Ayyamul Bidh (${hInfo.day} ${HIJRI_MONTH_NAMES[hInfo.month - 1]})`,
+						desc: `Puasa sunnah hari-hari putih pertengahan bulan ${HIJRI_MONTH_NAMES[hInfo.month - 1]}.`,
+						type: "sunnah"
+					};
+				}
+
+				if (hInfo.day === 1 && hInfo.month !== 1 && hInfo.month !== 9 && hInfo.month !== 10) {
+					return {
+						title: `Awal Bulan ${HIJRI_MONTH_NAMES[hInfo.month - 1]}`,
+						desc: `Awal masuknya bulan baru ${HIJRI_MONTH_NAMES[hInfo.month - 1]} ${hInfo.year} H.`,
+						type: "special"
+					};
+				}
+
+				if (hInfo.month === 12 && hInfo.day >= 1 && hInfo.day <= 7) {
+					return {
+						title: `Puasa Awal Dzulhijjah (${hInfo.day} Dzulhijjah)`,
+						desc: "Sunnah memperbanyak puasa dan amal kebaikan di 10 hari pertama Dzulhijjah.",
+						type: "sunnah"
+					};
+				}
+
+				if (hInfo.month === 10 && hInfo.day >= 3 && hInfo.day <= 8) {
+					return {
+						title: `Puasa Sunnah 6 Hari Syawal`,
+						desc: "Dianjurkan berpuasa 6 hari di bulan Syawal dengan pahala seperti puasa setahun penuh.",
+						type: "sunnah"
+					};
+				}
+
+				const isHaramFasting = (hInfo.month === 10 && hInfo.day === 1) || (hInfo.month === 12 && hInfo.day >= 10 && hInfo.day <= 13);
+				if (hInfo.month !== 9 && !isHaramFasting) {
+					if (dayOfWeek === 1) {
+						return {
+							title: "Puasa Sunnah Senin",
+							desc: "Hari di mana amal hamba diperlihatkan kepada Allah dan hari lahirnya Rasulullah SAW.",
+							type: "sunnah"
+						};
+					}
+					if (dayOfWeek === 4) {
+						return {
+							title: "Puasa Sunnah Kamis",
+							desc: "Hari diangkatnya catatan amalan hamba ke hadirat Allah SWT.",
+							type: "sunnah"
+						};
+					}
+				}
+
+				return null;
 			}
 
 			const hijriTitle = document.getElementById('hijri-result-title');
@@ -257,8 +331,7 @@ import Navbar from "../layouts/navbar.astro";
 					if (hijriTitle) hijriTitle.textContent = hijriFormatted;
 					if (hijriSub) hijriSub.textContent = `Masehi: ${ceFormatted}`;
 
-					const hInfo = getHijriInfo(dateObj);
-					const evt = ISLAMIC_EVENTS[hInfo.key];
+					const evt = getEventForDate(dateObj);
 
 					if (evt && eventBadge && eventBadgeTitle && eventBadgeDesc) {
 						eventBadgeTitle.textContent = evt.title;
@@ -285,47 +358,59 @@ import Navbar from "../layouts/navbar.astro";
 
 				for (let i = firstDayIndex - 1; i >= 0; i--) {
 					const prevDay = prevMonthTotalDays - i;
-					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none">${prevDay}</div>`;
+					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none text-center">${prevDay}</div>`;
 				}
 
 				const today = new Date();
 				const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
 
-				const foundEventsInMonth: { dateStr: string; title: string; desc: string }[] = [];
+				const foundEventsInMonth: { dateStr: string; title: string; desc: string; type: string }[] = [];
 
 				for (let day = 1; day <= totalDays; day++) {
 					const currentDayDate = new Date(year, month, day);
 					const isToday = isCurrentMonth && today.getDate() === day;
 					const isSelected = selectedDate.getFullYear() === year && selectedDate.getMonth() === month && selectedDate.getDate() === day;
 
-					const hInfo = getHijriInfo(currentDayDate);
-					const hasEvent = !!ISLAMIC_EVENTS[hInfo.key];
+					const evt = getEventForDate(currentDayDate);
+					const hasEvent = !!evt;
 
-					if (hasEvent) {
+					if (evt) {
 						foundEventsInMonth.push({
 							dateStr: `${day} ${monthNamesIndo[month]}`,
-							title: ISLAMIC_EVENTS[hInfo.key].title,
-							desc: ISLAMIC_EVENTS[hInfo.key].desc
+							title: evt.title,
+							desc: evt.desc,
+							type: evt.type
 						});
 					}
 
 					let bgClass = 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200';
+					let dotClass = 'bg-[#009788]';
+
 					if (isSelected) {
 						bgClass = 'bg-[#009788] text-white font-bold shadow-xs';
+						dotClass = 'bg-white';
 					} else if (isToday) {
 						bgClass = 'border-2 border-[#009788] text-[#009788] font-bold';
+						dotClass = 'bg-[#009788]';
 					} else if (hasEvent) {
-						bgClass = 'bg-emerald-50 dark:bg-emerald-950/40 text-[#009788] font-semibold';
+						if (evt.type === 'holiday') {
+							bgClass = 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 font-semibold';
+							dotClass = 'bg-amber-500';
+						} else {
+							bgClass = 'bg-emerald-50 dark:bg-emerald-950/40 text-[#009788] font-semibold';
+							dotClass = 'bg-[#009788]';
+						}
 					}
 
 					html += `
 						<button 
 							type="button" 
 							data-day="${day}" 
-							class="cal-day-cell p-2 rounded-xl text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${bgClass}"
+							class="cal-day-cell p-1.5 sm:p-2 rounded-xl text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer min-h-[42px] sm:min-h-[46px] ${bgClass}"
+							title="${hasEvent ? evt.title : ''}"
 						>
-							<span>${day}</span>
-							${hasEvent ? '<span class="w-1.5 h-1.5 rounded-full bg-[#009788] -mb-1 mt-0.5"></span>' : ''}
+							<span class="leading-none mb-1">${day}</span>
+							${hasEvent ? `<span class="w-1.5 h-1.5 rounded-full ${dotClass} shadow-xs"></span>` : '<span class="w-1.5 h-1.5 opacity-0"></span>'}
 						</button>
 					`;
 				}
@@ -333,7 +418,7 @@ import Navbar from "../layouts/navbar.astro";
 				const totalRenderedCells = firstDayIndex + totalDays;
 				const remainingCells = (7 - (totalRenderedCells % 7)) % 7;
 				for (let i = 1; i <= remainingCells; i++) {
-					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none">${i}</div>`;
+					html += `<div class="p-2 text-gray-300 dark:text-gray-700 select-none text-center">${i}</div>`;
 				}
 
 				daysGrid.innerHTML = html;
@@ -341,18 +426,21 @@ import Navbar from "../layouts/navbar.astro";
 				if (monthEventsList) {
 					if (foundEventsInMonth.length > 0) {
 						monthEventsList.innerHTML = foundEventsInMonth.map(ev => `
-							<div class="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+							<div class="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#009788]/50 transition-all">
 								<div class="font-bold text-gray-900 dark:text-white flex items-center justify-between">
-									<span>${ev.title}</span>
-									<span class="text-[10px] text-[#009788] font-mono">${ev.dateStr}</span>
+									<span class="flex items-center gap-1.5">
+										<span class="w-2 h-2 rounded-full ${ev.type === 'holiday' ? 'bg-amber-500' : 'bg-[#009788]'}"></span>
+										${ev.title}
+									</span>
+									<span class="text-[10px] text-[#009788] font-mono font-semibold">${ev.dateStr}</span>
 								</div>
-								<p class="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5">${ev.desc}</p>
+								<p class="text-gray-500 dark:text-gray-400 text-[11px] mt-1 leading-relaxed">${ev.desc}</p>
 							</div>
 						`).join('');
 					} else {
 						monthEventsList.innerHTML = `
 							<div class="p-3 text-center text-gray-400">
-								Tidak ada hari besar Islam di bulan ini.
+								Tidak ada hari besar atau agenda ibadah di bulan ini.
 							</div>
 						`;
 					}

@@ -1,0 +1,934 @@
+---
+import "../styles/global.css";
+import Navbar from "../layouts/navbar.astro";
+import { NIAT_DATA } from "../data/niat";
+import { DoaService, type DoaItem } from "../lib/api/doa";
+import { CURATED_THEMATIC_HADITHS } from "../lib/api/hadis-id";
+import { HadisService } from "../lib/api/hadis";
+
+let initialDoas: DoaItem[] = [];
+let initialMyQuranHadis: any[] = [];
+let initialMyQuranPaging: any = null;
+
+try {
+  const [doasRes, myquranRes] = await Promise.allSettled([
+    DoaService.getAll(),
+    HadisService.explore(1, 10)
+  ]);
+
+  if (doasRes.status === "fulfilled") {
+    initialDoas = doasRes.value || [];
+  }
+  if (myquranRes.status === "fulfilled" && myquranRes.value?.data) {
+    initialMyQuranHadis = myquranRes.value.data.hadis || [];
+    initialMyQuranPaging = myquranRes.value.data.paging || null;
+  }
+} catch (e) {
+  console.error("SSR Data Load Error:", e);
+}
+
+const serializedNiat = JSON.stringify(NIAT_DATA);
+const serializedDoas = JSON.stringify(initialDoas);
+const serializedThematicHadiths = JSON.stringify(CURATED_THEMATIC_HADITHS);
+---
+
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ensiklopedia Islam - Tartiliya</title>
+    <meta name="description" content="Ensiklopedia Islam Tartiliya: Pencarian Global Niat Ibadah, 228 Doa Harian, Hadis Tematik (Iman, Shalat, Puasa, Sedekah, Ilmu, Akhlak) dan Ensiklopedia Hadis Perawi." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+    
+    <script is:inline>
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+  </head>
+  <body class="min-h-screen bg-[#f8fafc] dark:bg-[#111827] text-[#111827] dark:text-[#f8fafc] transition-colors duration-200">
+    <Navbar />
+    
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 md:pb-16">
+      
+      <section class="relative overflow-hidden rounded-3xl bg-[#009788] text-white p-6 sm:p-8 mb-6 shadow-xs">
+        <div class="relative z-10 max-w-3xl">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider mb-3">
+            <span class="material-symbols-rounded text-sm">auto_stories</span>
+            Pustaka & Panduan Ibadah
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
+            Ensiklopedia Islam
+          </h1>
+          <p class="text-xs sm:text-sm text-white/90 font-normal leading-relaxed mb-5">
+            Pencarian global terpadu untuk niat ibadah, kumpulan doa harian shahih, hadis tematik nabi, dan kitab hadis mu'tabar.
+          </p>
+
+          <div class="relative max-w-xl">
+            <input 
+              type="text" 
+              id="ensiklopedia-search-input"
+              placeholder="Cari niat shalat, doa tidur/makan, hadits puasa, sedekah..."
+              class="w-full pl-11 pr-10 py-3 rounded-2xl bg-white text-gray-800 placeholder-gray-400 text-sm font-medium shadow-xs focus:outline-none focus:ring-4 focus:ring-emerald-300 transition-all"
+            />
+            <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">
+              search
+            </span>
+            <button 
+              id="clear-search-btn" 
+              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer p-1"
+              title="Hapus pencarian"
+            >
+              <span class="material-symbols-rounded text-lg">close</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none text-white select-none">
+          <span class="material-symbols-rounded text-[180px]">menu_book</span>
+        </div>
+      </section>
+
+      <section class="mb-4 sticky top-16 md:top-20 z-30 bg-[#f8fafc]/95 dark:bg-[#111827]/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6">
+        <div class="grid grid-cols-5 gap-1.5 sm:gap-2 w-full select-none" id="category-tabs-container">
+          
+          <button type="button" class="tab-btn active flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold bg-[#009788] text-white shadow-xs transition-all cursor-pointer" data-tab="all">
+            <span class="material-symbols-rounded text-lg sm:text-base">explore</span>
+            <span>Semua</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="niat">
+            <span class="material-symbols-rounded text-lg sm:text-base">format_quote</span>
+            <span>Niat</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="doa">
+            <span class="material-symbols-rounded text-lg sm:text-base">front_hand</span>
+            <span>Doa</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="iman">
+            <span class="material-symbols-rounded text-lg sm:text-base">verified</span>
+            <span>Iman</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="shalat">
+            <span class="material-symbols-rounded text-lg sm:text-base">mosque</span>
+            <span>Shalat</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="puasa">
+            <span class="material-symbols-rounded text-lg sm:text-base">dark_mode</span>
+            <span>Puasa</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="sedekah">
+            <span class="material-symbols-rounded text-lg sm:text-base">volunteer_activism</span>
+            <span>Sedekah</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="ilmu">
+            <span class="material-symbols-rounded text-lg sm:text-base">school</span>
+            <span>Ilmu</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="akhlak">
+            <span class="material-symbols-rounded text-lg sm:text-base">psychology</span>
+            <span>Akhlak</span>
+          </button>
+
+          <button type="button" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold bg-gray-100 dark:bg-[#1f2937] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788] transition-all cursor-pointer" data-tab="umum">
+            <span class="material-symbols-rounded text-lg sm:text-base">library_books</span>
+            <span>MyQuran</span>
+          </button>
+
+        </div>
+      </section>
+
+      <div id="sub-filter-bar" class="mb-4 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none">
+      </div>
+
+      <div class="flex items-center justify-between text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4 px-1">
+        <span id="result-count-label">Menampilkan data...</span>
+        <span id="active-category-indicator" class="font-semibold text-[#009788]">Semua Kategori</span>
+      </div>
+
+      <div id="cards-container" class="space-y-4">
+        {NIAT_DATA.map((item) => (
+          <article class="ensiklopedia-card bg-white dark:bg-[#1f2937] rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-800 shadow-xs hover:border-[#009788]/40 dark:hover:border-[#009788]/40 transition-all duration-200" data-id={item.id} data-type="niat">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-[#e3fcf0] dark:bg-[#009788]/20 text-[#009788]">
+                <span class="material-symbols-rounded text-sm">format_quote</span>
+                Niat: {item.categoryLabel}
+              </span>
+              <button 
+                type="button" 
+                class="copy-btn flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#009788] dark:hover:text-[#009788] px-2.5 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+                data-copy={`${item.title}\n\n${item.arab}\n\n${item.latin}\n\nArtinya:\n"${item.translation}"`}
+                title="Salin Niat"
+              >
+                <span class="material-symbols-rounded text-sm">content_copy</span>
+                <span class="copy-text">Salin</span>
+              </button>
+            </div>
+
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
+              {item.title}
+            </h3>
+
+            <div class="bg-[#f8fafc] dark:bg-[#111827]/60 rounded-xl p-4 sm:p-5 mb-4 border border-gray-100 dark:border-gray-800/80">
+              <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
+                {item.arab}
+              </p>
+              <p class="text-xs sm:text-sm font-medium text-[#009788] dark:text-[#2dd4bf] italic mb-2 leading-relaxed">
+                {item.latin}
+              </p>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                "{item.translation}"
+              </p>
+            </div>
+
+            {item.explanation && (
+              <div class="flex items-start gap-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 p-3 rounded-xl">
+                <span class="material-symbols-rounded text-sm text-[#009788] mt-0.5">info</span>
+                <span>{item.explanation}</span>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <div id="general-pagination" class="hidden mt-8 flex items-center justify-center gap-2">
+        <button id="prev-page-btn" class="px-4 py-2 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-700 dark:text-gray-200 hover:border-[#009788] hover:text-[#009788] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-all">
+          Sebelumnya
+        </button>
+        <span id="page-info-label" class="text-xs font-semibold text-gray-600 dark:text-gray-400 px-3">
+          Halaman 1
+        </span>
+        <button id="next-page-btn" class="px-4 py-2 rounded-xl bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-700 dark:text-gray-200 hover:border-[#009788] hover:text-[#009788] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-all">
+          Selanjutnya
+        </button>
+      </div>
+
+      <div id="toast" class="fixed bottom-20 md:bottom-8 right-1/2 translate-x-1/2 md:translate-x-0 md:right-8 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-bold">
+        <span class="material-symbols-rounded text-emerald-400 dark:text-[#009788] text-base">check_circle</span>
+        <span id="toast-message">Teks berhasil disalin!</span>
+      </div>
+
+    </main>
+
+    <script id="raw-niat-data" type="application/json" set:html={serializedNiat}></script>
+    <script id="raw-doa-data" type="application/json" set:html={serializedDoas}></script>
+    <script id="raw-hadith-data" type="application/json" set:html={serializedThematicHadiths}></script>
+
+    <script is:inline>
+      let niatList = [];
+      let doaList = [];
+      let thematicHadiths = [];
+      
+      try {
+        niatList = JSON.parse(document.getElementById('raw-niat-data')?.textContent || '[]');
+        doaList = JSON.parse(document.getElementById('raw-doa-data')?.textContent || '[]');
+        thematicHadiths = JSON.parse(document.getElementById('raw-hadith-data')?.textContent || '[]');
+      } catch (e) {
+        console.error('Error parsing raw data:', e);
+      }
+
+      if (!doaList || doaList.length === 0) {
+        fetch('https://equran.id/api/doa')
+          .then(r => r.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              doaList = data;
+              if (searchQuery.trim()) {
+                renderCards();
+              }
+            }
+          })
+          .catch(err => console.error('Background doa fetch error:', err));
+      }
+
+      let currentTab = 'all';
+      let currentSubFilter = 'all';
+      let searchQuery = '';
+      let searchTimeout = null;
+      let generalHadisPage = 1;
+      let generalHadisTotalPages = 1;
+
+      const searchInput = document.getElementById('ensiklopedia-search-input');
+      const clearSearchBtn = document.getElementById('clear-search-btn');
+      const categoryTabs = document.querySelectorAll('.tab-btn');
+      const subFilterBar = document.getElementById('sub-filter-bar');
+      const cardsContainer = document.getElementById('cards-container');
+      const resultCountLabel = document.getElementById('result-count-label');
+      const activeCategoryIndicator = document.getElementById('active-category-indicator');
+      const generalPagination = document.getElementById('general-pagination');
+      const prevPageBtn = document.getElementById('prev-page-btn');
+      const nextPageBtn = document.getElementById('next-page-btn');
+      const pageInfoLabel = document.getElementById('page-info-label');
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+
+      function showToast(msg) {
+        if (!toast || !toastMessage) return;
+        toastMessage.textContent = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        }, 2500);
+      }
+
+      function setupCopyButtons() {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.onclick = async () => {
+            const textToCopy = btn.getAttribute('data-copy');
+            if (textToCopy) {
+              try {
+                await navigator.clipboard.writeText(textToCopy);
+                const copyText = btn.querySelector('.copy-text');
+                if (copyText) copyText.textContent = 'Tersalin!';
+                showToast('Teks berhasil disalin ke clipboard');
+                setTimeout(() => {
+                  if (copyText) copyText.textContent = 'Salin';
+                }, 2000);
+              } catch (e) {
+                showToast('Gagal menyalin teks');
+              }
+            }
+          };
+        });
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function renderEmptyState(msg) {
+        return `
+          <div class="bg-white dark:bg-[#1f2937] rounded-2xl p-10 text-center border border-gray-200 dark:border-gray-800 shadow-xs">
+            <span class="material-symbols-rounded text-4xl text-gray-300 dark:text-gray-600 mb-2 inline-block">search_off</span>
+            <p class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">${msg}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">Coba gunakan kata kunci lain atau pilih kategori di tab atas.</p>
+          </div>
+        `;
+      }
+
+      function renderNiatCard(item) {
+        return `
+          <article class="ensiklopedia-card bg-white dark:bg-[#1f2937] rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-800 shadow-xs hover:border-[#009788]/40 dark:hover:border-[#009788]/40 transition-all duration-200">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-[#e3fcf0] dark:bg-[#009788]/20 text-[#009788]">
+                <span class="material-symbols-rounded text-sm">format_quote</span>
+                Niat: ${item.categoryLabel}
+              </span>
+              <button 
+                type="button" 
+                class="copy-btn flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#009788] dark:hover:text-[#009788] px-2.5 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+                data-copy="${escapeHtml(`${item.title}\n\n${item.arab}\n\n${item.latin}\n\nArtinya:\n"${item.translation}"`)}"
+                title="Salin Niat"
+              >
+                <span class="material-symbols-rounded text-sm">content_copy</span>
+                <span class="copy-text">Salin</span>
+              </button>
+            </div>
+
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
+              ${item.title}
+            </h3>
+
+            <div class="bg-[#f8fafc] dark:bg-[#111827]/60 rounded-xl p-4 sm:p-5 mb-4 border border-gray-100 dark:border-gray-800/80">
+              <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
+                ${item.arab}
+              </p>
+              <p class="text-xs sm:text-sm font-medium text-[#009788] dark:text-[#2dd4bf] italic mb-2 leading-relaxed">
+                ${item.latin}
+              </p>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                "${item.translation}"
+              </p>
+            </div>
+
+            ${item.explanation ? `
+              <div class="flex items-start gap-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 p-3 rounded-xl">
+                <span class="material-symbols-rounded text-sm text-[#009788] mt-0.5">info</span>
+                <span>${item.explanation}</span>
+              </div>
+            ` : ''}
+          </article>
+        `;
+      }
+
+      function renderDoaCard(item) {
+        return `
+          <article class="ensiklopedia-card bg-white dark:bg-[#1f2937] rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-800 shadow-xs hover:border-[#009788]/40 dark:hover:border-[#009788]/40 transition-all duration-200">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/40">
+                  <span class="material-symbols-rounded text-sm">front_hand</span>
+                  Doa: ${item.grup || 'Harian'}
+                </span>
+                <span class="text-xs text-gray-400 font-mono">#${item.id}</span>
+              </div>
+              <button 
+                type="button" 
+                class="copy-btn flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#009788] dark:hover:text-[#009788] px-2.5 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+                data-copy="${escapeHtml(`${item.nama}\n\n${item.ar}\n\n${item.tr}\n\nArtinya:\n"${item.idn}"\n\nSumber: ${item.tentang || '-'}`)}"
+                title="Salin Doa"
+              >
+                <span class="material-symbols-rounded text-sm">content_copy</span>
+                <span class="copy-text">Salin</span>
+              </button>
+            </div>
+
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
+              ${item.nama}
+            </h3>
+
+            <div class="bg-[#f8fafc] dark:bg-[#111827]/60 rounded-xl p-4 sm:p-5 mb-4 border border-gray-100 dark:border-gray-800/80">
+              <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
+                ${item.ar}
+              </p>
+              <p class="text-xs sm:text-sm font-medium text-[#009788] dark:text-[#2dd4bf] italic mb-2 leading-relaxed">
+                ${item.tr}
+              </p>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                "${item.idn}"
+              </p>
+            </div>
+
+            ${item.tentang ? `
+              <div class="flex items-start gap-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 p-3 rounded-xl">
+                <span class="material-symbols-rounded text-sm text-[#009788] mt-0.5">menu_book</span>
+                <span><strong>Takhrij:</strong> ${item.tentang}</span>
+              </div>
+            ` : ''}
+          </article>
+        `;
+      }
+
+      function renderHadisThematicCard(item) {
+        return `
+          <article class="ensiklopedia-card bg-white dark:bg-[#1f2937] rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-800 shadow-xs hover:border-[#009788]/40 dark:hover:border-[#009788]/40 transition-all duration-200">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40">
+                  <span class="material-symbols-rounded text-sm">menu_book</span>
+                  Hadis: ${item.categoryLabel}
+                </span>
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 rounded-md">
+                  ${item.kitabReference}
+                </span>
+              </div>
+              <button 
+                type="button" 
+                class="copy-btn flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#009788] dark:hover:text-[#009788] px-2.5 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+                data-copy="${escapeHtml(`${item.title}\n\n${item.kitabReference}\n\n${item.arab}\n\nArtinya:\n"${item.translation}"\n\nHikmah: ${item.lesson || '-'}`)}"
+                title="Salin Hadis"
+              >
+                <span class="material-symbols-rounded text-sm">content_copy</span>
+                <span class="copy-text">Salin</span>
+              </button>
+            </div>
+
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
+              ${item.title}
+            </h3>
+
+            <div class="bg-[#f8fafc] dark:bg-[#111827]/60 rounded-xl p-4 sm:p-5 mb-4 border border-gray-100 dark:border-gray-800/80">
+              <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
+                ${item.arab}
+              </p>
+              <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                "${item.translation}"
+              </p>
+            </div>
+
+            ${item.lesson ? `
+              <div class="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 p-3.5 rounded-xl">
+                <span class="material-symbols-rounded text-sm text-[#009788] mt-0.5">lightbulb</span>
+                <div>
+                  <strong class="text-[#009788] dark:text-[#2dd4bf] block mb-0.5">Hikmah & Faedah:</strong>
+                  <span>${item.lesson}</span>
+                </div>
+              </div>
+            ` : ''}
+          </article>
+        `;
+      }
+
+      function renderSubFilters() {
+        if (!subFilterBar) return;
+        subFilterBar.innerHTML = '';
+
+        const q = searchQuery.toLowerCase().trim();
+
+        if (q) {
+          const typeFilters = [
+            { id: 'all', label: 'Semua Hasil', icon: 'explore' },
+            { id: 'niat', label: 'Niat', icon: 'format_quote' },
+            { id: 'doa', label: 'Doa', icon: 'front_hand' },
+            { id: 'hadis', label: 'Hadis', icon: 'menu_book' }
+          ];
+
+          typeFilters.forEach(f => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `sub-filter-btn shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              currentSubFilter === f.id 
+                ? 'bg-[#009788] text-white shadow-xs' 
+                : 'bg-gray-100 dark:bg-[#1f2937] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788]'
+            }`;
+            btn.innerHTML = `<span class="material-symbols-rounded text-sm">${f.icon}</span><span>${f.label}</span>`;
+            btn.onclick = () => {
+              currentSubFilter = f.id;
+              renderSubFilters();
+              renderCards();
+              btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            };
+            subFilterBar.appendChild(btn);
+          });
+          subFilterBar.classList.remove('hidden');
+          return;
+        }
+
+        if (currentTab === 'all') {
+          subFilterBar.classList.add('hidden');
+        } else if (currentTab === 'niat') {
+          const filters = [
+            { id: 'all', label: 'Semua Niat' },
+            { id: 'shalat-fardhu', label: 'Shalat Fardhu' },
+            { id: 'shalat-sunnah', label: 'Shalat Sunnah' },
+            { id: 'puasa', label: 'Puasa' },
+            { id: 'thaharah', label: 'Thaharah' },
+            { id: 'zakat', label: 'Zakat & Sedekah' }
+          ];
+
+          filters.forEach(f => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `sub-filter-btn shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              currentSubFilter === f.id 
+                ? 'bg-[#009788] text-white shadow-xs' 
+                : 'bg-gray-100 dark:bg-[#1f2937] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788]'
+            }`;
+            btn.textContent = f.label;
+            btn.onclick = () => {
+              currentSubFilter = f.id;
+              renderSubFilters();
+              renderCards();
+              btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            };
+            subFilterBar.appendChild(btn);
+          });
+          subFilterBar.classList.remove('hidden');
+        } else if (currentTab === 'doa') {
+          const groups = ['all', 'Pagi & Petang', 'Shalat', 'Rumah', 'Makanan & Minuman', 'Perjalanan', 'Etika & Kebaikan', 'Perlindungan'];
+          groups.forEach(g => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `sub-filter-btn shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              currentSubFilter === g 
+                ? 'bg-[#009788] text-white shadow-xs' 
+                : 'bg-gray-100 dark:bg-[#1f2937] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-[#009788]'
+            }`;
+            btn.textContent = g === 'all' ? 'Semua Doa' : g;
+            btn.onclick = () => {
+              currentSubFilter = g;
+              renderSubFilters();
+              renderCards();
+              btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            };
+            subFilterBar.appendChild(btn);
+          });
+          subFilterBar.classList.remove('hidden');
+        } else {
+          subFilterBar.classList.add('hidden');
+        }
+      }
+
+      function renderCards() {
+        if (!cardsContainer) return;
+        const q = searchQuery.toLowerCase().trim();
+
+        if (q) {
+          generalPagination?.classList.add('hidden');
+          activeCategoryIndicator.textContent = `Pencarian Global: "${searchQuery}"`;
+
+          const matchingNiat = (currentSubFilter === 'all' || currentSubFilter === 'niat') 
+            ? niatList.filter(item => 
+                item.title.toLowerCase().includes(q) ||
+                item.translation.toLowerCase().includes(q) ||
+                item.latin.toLowerCase().includes(q) ||
+                (item.explanation && item.explanation.toLowerCase().includes(q))
+              ) 
+            : [];
+
+          const matchingDoa = (currentSubFilter === 'all' || currentSubFilter === 'doa')
+            ? (doaList || []).filter(item => 
+                item.nama.toLowerCase().includes(q) ||
+                item.idn.toLowerCase().includes(q) ||
+                item.tr.toLowerCase().includes(q) ||
+                item.grup.toLowerCase().includes(q) ||
+                (item.tentang && item.tentang.toLowerCase().includes(q)) ||
+                (item.tag && item.tag.some(t => t.toLowerCase().includes(q)))
+              )
+            : [];
+
+          const matchingHadis = (currentSubFilter === 'all' || currentSubFilter === 'hadis')
+            ? thematicHadiths.filter(item => 
+                item.title.toLowerCase().includes(q) ||
+                item.translation.toLowerCase().includes(q) ||
+                item.kitabReference.toLowerCase().includes(q) ||
+                item.categoryLabel.toLowerCase().includes(q) ||
+                (item.lesson && item.lesson.toLowerCase().includes(q))
+              )
+            : [];
+
+          const totalMatches = matchingNiat.length + matchingDoa.length + matchingHadis.length;
+
+          resultCountLabel.textContent = `Ditemukan ${totalMatches} hasil pencarian (${matchingNiat.length} Niat, ${matchingDoa.length} Doa, ${matchingHadis.length} Hadis)`;
+
+          if (totalMatches === 0) {
+            cardsContainer.innerHTML = renderEmptyState(`Tidak ditemukan hasil untuk kata kunci "${searchQuery}".`);
+            return;
+          }
+
+          let html = '';
+          matchingNiat.forEach(item => { html += renderNiatCard(item); });
+          matchingDoa.forEach(item => { html += renderDoaCard(item); });
+          matchingHadis.forEach(item => { html += renderHadisThematicCard(item); });
+
+          cardsContainer.innerHTML = html;
+          setupCopyButtons();
+          return;
+        }
+
+        if (currentTab === 'all') {
+          generalPagination?.classList.add('hidden');
+          activeCategoryIndicator.textContent = 'Semua Kategori';
+
+          let html = '';
+          niatList.forEach(item => { html += renderNiatCard(item); });
+          (doaList || []).forEach(item => { html += renderDoaCard(item); });
+          thematicHadiths.forEach(item => { html += renderHadisThematicCard(item); });
+
+          const total = niatList.length + (doaList?.length || 0) + thematicHadiths.length;
+          resultCountLabel.textContent = `Menampilkan ${total} Entri Ensiklopedia`;
+
+          cardsContainer.innerHTML = html;
+          setupCopyButtons();
+          return;
+        }
+
+        if (currentTab === 'niat') {
+          generalPagination?.classList.add('hidden');
+          activeCategoryIndicator.textContent = 'Niat Ibadah';
+
+          let filtered = niatList.filter(item => (currentSubFilter === 'all' || item.category === currentSubFilter));
+          resultCountLabel.textContent = `Menampilkan ${filtered.length} Niat Ibadah`;
+
+          if (filtered.length === 0) {
+            cardsContainer.innerHTML = renderEmptyState('Tidak ada niat ibadah pada kategori ini.');
+            return;
+          }
+
+          cardsContainer.innerHTML = filtered.map(renderNiatCard).join('');
+          setupCopyButtons();
+          return;
+        }
+
+        if (currentTab === 'doa') {
+          generalPagination?.classList.add('hidden');
+          activeCategoryIndicator.textContent = 'Doa Harian (equran.id)';
+
+          if (!doaList || doaList.length === 0) {
+            cardsContainer.innerHTML = `
+              <div class="p-12 text-center text-gray-500 dark:text-gray-400">
+                <span class="material-symbols-rounded text-4xl animate-spin text-[#009788] mb-3 inline-block">progress_activity</span>
+                <p class="text-sm font-semibold">Memuat data 228 doa dari equran.id...</p>
+              </div>
+            `;
+            fetch('https://equran.id/api/doa')
+              .then(r => r.json())
+              .then(data => {
+                if (Array.isArray(data)) {
+                  doaList = data;
+                  renderCards();
+                } else {
+                  cardsContainer.innerHTML = renderEmptyState('Gagal memproses data doa.');
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                cardsContainer.innerHTML = renderEmptyState('Gagal memuat data doa dari server equran.id.');
+              });
+            return;
+          }
+
+          let filtered = doaList.filter(item => (currentSubFilter === 'all' || item.grup.toLowerCase().includes(currentSubFilter.toLowerCase())));
+          resultCountLabel.textContent = `Menampilkan ${filtered.length} Doa Harian`;
+
+          if (filtered.length === 0) {
+            cardsContainer.innerHTML = renderEmptyState('Tidak ada doa pada kategori ini.');
+            return;
+          }
+
+          cardsContainer.innerHTML = filtered.map(renderDoaCard).join('');
+          setupCopyButtons();
+          return;
+        }
+
+        if (['iman', 'shalat', 'puasa', 'sedekah', 'ilmu', 'akhlak'].includes(currentTab)) {
+          generalPagination?.classList.add('hidden');
+          const tabLabelMap = {
+            iman: 'Iman & Aqidah',
+            shalat: 'Shalat & Thaharah',
+            puasa: 'Puasa & Ramadhan',
+            sedekah: 'Sedekah & Zakat',
+            ilmu: 'Ilmu & Pendidikan',
+            akhlak: 'Akhlak & Adab'
+          };
+          activeCategoryIndicator.textContent = tabLabelMap[currentTab] || 'Hadis Tematik';
+
+          let filtered = thematicHadiths.filter(item => item.category === currentTab);
+          resultCountLabel.textContent = `Menampilkan ${filtered.length} Hadis Tematik Pilihan`;
+
+          if (filtered.length === 0) {
+            cardsContainer.innerHTML = renderEmptyState('Tidak ada hadis tematik pada kategori ini.');
+            return;
+          }
+
+          cardsContainer.innerHTML = filtered.map(renderHadisThematicCard).join('');
+          setupCopyButtons();
+          return;
+        }
+
+        if (currentTab === 'umum') {
+          activeCategoryIndicator.textContent = 'Eksplorasi Hadis (MyQuran API)';
+          loadGeneralHadis(generalHadisPage, q);
+        }
+      }
+
+      async function loadGeneralHadis(page = 1, keyword = '') {
+        if (!cardsContainer) return;
+        cardsContainer.innerHTML = `
+          <div class="p-12 text-center text-gray-500 dark:text-gray-400">
+            <span class="material-symbols-rounded text-4xl animate-spin text-[#009788] mb-3 inline-block">progress_activity</span>
+            <p class="text-sm font-semibold">Memuat data ensiklopedia hadis MyQuran...</p>
+          </div>
+        `;
+
+        try {
+          let url = keyword.trim() 
+            ? `https://api.myquran.com/v3/hadis/enc/search?keyword=${encodeURIComponent(keyword.trim())}&page=${page}`
+            : `https://api.myquran.com/v3/hadis/enc/explore?page=${page}&per_page=10`;
+
+          const res = await fetch(url);
+          const json = await res.json();
+          
+          if (json && json.status && json.data) {
+            const list = json.data.hadis || [];
+            const paging = json.data.paging || {};
+            generalHadisPage = paging.current || page;
+            generalHadisTotalPages = paging.total_pages || 1;
+            const totalData = paging.total_data || list.length;
+
+            resultCountLabel.textContent = `Menampilkan ${list.length} dari ${totalData} Hadis (Halaman ${generalHadisPage} dari ${generalHadisTotalPages})`;
+
+            if (list.length === 0) {
+              cardsContainer.innerHTML = renderEmptyState('Tidak ada hadis yang ditemukan di MyQuran API.');
+              generalPagination?.classList.add('hidden');
+              return;
+            }
+
+            cardsContainer.innerHTML = list.map(item => {
+              const arabText = item.text?.ar || (typeof item.text === 'object' ? item.text?.ar : '') || '';
+              const indoText = item.text?.id || (typeof item.text === 'string' ? item.text : '') || item.indo || item.terjemah || '';
+              const title = item.judul || `Hadis Ensiklopedia No. ${item.id}`;
+              const grade = item.grade || item.derajat || '';
+              const takhrij = item.takhrij || '';
+              const hikmah = item.hikmah || '';
+
+              return `
+                <article class="ensiklopedia-card bg-white dark:bg-[#1f2937] rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-800 shadow-xs hover:border-[#009788]/40 dark:hover:border-[#009788]/40 transition-all duration-200">
+                  <div class="flex items-center justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold bg-[#e3fcf0] dark:bg-[#009788]/20 text-[#009788]">
+                        Hadis #${item.id}
+                      </span>
+                      ${grade ? `
+                        <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/50 px-2.5 py-0.5 rounded-md">
+                          ${grade}
+                        </span>
+                      ` : ''}
+                    </div>
+                    <button 
+                      type="button" 
+                      class="copy-btn flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#009788] dark:hover:text-[#009788] px-2.5 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+                      data-copy="${escapeHtml(`${title}\n\n${arabText ? arabText + '\n\n' : ''}Artinya:\n"${indoText}"\n\n${takhrij ? 'Takhrij: ' + takhrij + '\n' : ''}${hikmah ? 'Hikmah: ' + hikmah : ''}`)}"
+                      title="Salin Hadis"
+                    >
+                      <span class="material-symbols-rounded text-sm">content_copy</span>
+                      <span class="copy-text">Salin</span>
+                    </button>
+                  </div>
+
+                  <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4">
+                    ${title}
+                  </h3>
+
+                  <div class="bg-[#f8fafc] dark:bg-[#111827]/60 rounded-xl p-4 sm:p-5 mb-4 border border-gray-100 dark:border-gray-800/80">
+                    ${arabText ? `
+                      <p class="font-['Amiri',serif] text-xl sm:text-2xl leading-[2.2] text-right text-gray-800 dark:text-gray-100 font-bold mb-3 dir-rtl" dir="rtl">
+                        ${arabText}
+                      </p>
+                    ` : ''}
+                    <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                      "${indoText}"
+                    </p>
+                  </div>
+
+                  ${takhrij ? `
+                    <div class="flex items-start gap-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 p-3 rounded-xl mb-2">
+                      <span class="material-symbols-rounded text-sm text-[#009788] mt-0.5">menu_book</span>
+                      <span><strong>Takhrij:</strong> ${takhrij}</span>
+                    </div>
+                  ` : ''}
+
+                  ${hikmah ? `
+                    <div class="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 p-3 rounded-xl">
+                      <span class="material-symbols-rounded text-sm text-[#009788] mt-0.5">lightbulb</span>
+                      <div>
+                        <strong class="text-[#009788] dark:text-[#2dd4bf] block mb-0.5">Hikmah & Pelajaran:</strong>
+                        <span class="whitespace-pre-line leading-relaxed">${hikmah}</span>
+                      </div>
+                    </div>
+                  ` : ''}
+                </article>
+              `;
+            }).join('');
+
+            if (generalPagination && pageInfoLabel && prevPageBtn && nextPageBtn) {
+              generalPagination.classList.remove('hidden');
+              pageInfoLabel.textContent = `Hal ${generalHadisPage} dari ${generalHadisTotalPages}`;
+              prevPageBtn.disabled = generalHadisPage <= 1;
+              nextPageBtn.disabled = generalHadisPage >= generalHadisTotalPages;
+            }
+
+            setupCopyButtons();
+          } else {
+            cardsContainer.innerHTML = renderEmptyState('Gagal memuat hadis dari server MyQuran.');
+            generalPagination?.classList.add('hidden');
+          }
+        } catch (e) {
+          console.error(e);
+          cardsContainer.innerHTML = renderEmptyState('Terjadi kendala koneksi ke server MyQuran API.');
+          generalPagination?.classList.add('hidden');
+        }
+      }
+
+      categoryTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          categoryTabs.forEach(t => {
+            t.classList.remove('active', 'bg-[#009788]', 'text-white', 'shadow-xs', 'font-bold');
+            t.classList.add('bg-gray-100', 'dark:bg-[#1f2937]', 'text-gray-700', 'dark:text-gray-300', 'font-semibold');
+          });
+
+          tab.classList.add('active', 'bg-[#009788]', 'text-white', 'shadow-xs', 'font-bold');
+          tab.classList.remove('bg-gray-100', 'dark:bg-[#1f2937]', 'text-gray-700', 'dark:text-gray-300', 'font-semibold');
+
+          tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+          currentTab = tab.getAttribute('data-tab') || 'all';
+          currentSubFilter = 'all';
+          generalHadisPage = 1;
+
+          if (currentTab !== 'all' && searchInput && searchQuery) {
+            searchInput.value = '';
+            searchQuery = '';
+            clearSearchBtn?.classList.add('hidden');
+          }
+
+          const url = new URL(window.location);
+          url.searchParams.set('tab', currentTab);
+          window.history.replaceState({}, '', url);
+
+          renderSubFilters();
+          renderCards();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value;
+          if (clearSearchBtn) {
+            if (searchQuery) clearSearchBtn.classList.remove('hidden');
+            else clearSearchBtn.classList.add('hidden');
+          }
+
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            currentSubFilter = 'all';
+            renderSubFilters();
+            renderCards();
+          }, 250);
+        });
+      }
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+          if (searchInput) {
+            searchInput.value = '';
+            searchQuery = '';
+            clearSearchBtn.classList.add('hidden');
+            currentSubFilter = 'all';
+            renderSubFilters();
+            renderCards();
+          }
+        });
+      }
+
+      prevPageBtn?.addEventListener('click', () => {
+        if (generalHadisPage > 1) {
+          generalHadisPage--;
+          renderCards();
+          window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+      });
+
+      nextPageBtn?.addEventListener('click', () => {
+        if (generalHadisPage < generalHadisTotalPages) {
+          generalHadisPage++;
+          renderCards();
+          window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+        if (tabParam) {
+          const targetTabBtn = document.querySelector(`.tab-btn[data-tab="${tabParam}"]`);
+          if (targetTabBtn) {
+            targetTabBtn.click();
+            return;
+          }
+        }
+        renderSubFilters();
+        renderCards();
+      });
+    </script>
+  </body>
+</html>

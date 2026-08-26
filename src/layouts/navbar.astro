@@ -89,11 +89,11 @@ const isSurahDetail = currentPath.startsWith('/quran/') && currentPath !== '/qur
           Jadwal Shalat
         </a>
         <a 
-          href="/hadis" 
-          class={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl transition-all whitespace-nowrap ${currentPath === '/hadis' ? 'bg-[#009788] text-white shadow-sm font-bold' : 'text-[#6b7280] dark:text-[#696969] hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#009788]'}`}
+          href="/ensiklopedia" 
+          class={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl transition-all whitespace-nowrap ${currentPath === '/ensiklopedia' || currentPath === '/hadis' ? 'bg-[#009788] text-white shadow-sm font-bold' : 'text-[#6b7280] dark:text-[#696969] hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#009788]'}`}
         >
           <span class="material-symbols-rounded text-lg">menu_book</span>
-          Hadis
+          Ensiklopedia
         </a>
         <a 
           href="/kalender" 
@@ -132,11 +132,11 @@ const isSurahDetail = currentPath.startsWith('/quran/') && currentPath !== '/qur
       <span class="text-[10px] font-bold mt-0.5">Shalat</span>
     </a>
     <a 
-      href="/hadis" 
-      class={`flex flex-col items-center justify-center w-16 py-1 transition-all ${currentPath === '/hadis' ? 'text-[#009788] font-extrabold' : 'text-gray-500 dark:text-gray-400 hover:text-[#009788]'}`}
+      href="/ensiklopedia" 
+      class={`flex flex-col items-center justify-center w-16 py-1 transition-all ${currentPath === '/ensiklopedia' || currentPath === '/hadis' ? 'text-[#009788] font-extrabold' : 'text-gray-500 dark:text-gray-400 hover:text-[#009788]'}`}
     >
       <span class="material-symbols-rounded text-2xl">menu_book</span>
-      <span class="text-[10px] font-bold mt-0.5">Hadis</span>
+      <span class="text-[10px] font-bold mt-0.5">Ensiklopedia</span>
     </a>
     <a 
       href="/kalender" 
@@ -339,9 +339,9 @@ const isSurahDetail = currentPath.startsWith('/quran/') && currentPath !== '/qur
       resultsList.innerHTML = filtered.map(s => `
         <a href="/quran/${s.slug}" class="flex items-center justify-between p-3.5 sm:px-4 sm:py-3.5 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-all group">
           <div class="flex items-center gap-3.5 min-w-0">
-            <div class="w-10 h-10 rounded-none bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-xs font-bold text-[#009788] shrink-0 group-hover:bg-[#009788] group-hover:text-white transition-colors">
+            <span class="w-7 text-center text-sm sm:text-base font-extrabold text-[#009788] shrink-0 font-mono">
               ${s.number}
-            </div>
+            </span>
             <div class="min-w-0">
               <div class="text-sm sm:text-base font-bold text-gray-900 dark:text-white group-hover:text-[#009788] transition-colors truncate">
                 ${s.name}

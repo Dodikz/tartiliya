@@ -6,6 +6,8 @@ export { QiblaService } from './qibla';
 export { HadisService } from './hadis';
 export { ToolsService } from './tools';
 export { QuranService } from './quran';
+export { DoaService } from './doa';
+export { HadisIdService } from './hadis-id';
 
 import { SholatService } from './sholat';
 import { KalenderService } from './kalender';
@@ -14,9 +16,6 @@ import { HadisService } from './hadis';
 import { ToolsService } from './tools';
 import { QuranService } from './quran';
 
-/**
- * Unified MyQuran API v3 Client SDK
- */
 export const MyQuranAPI = {
   sholat: SholatService,
   kalender: KalenderService,
